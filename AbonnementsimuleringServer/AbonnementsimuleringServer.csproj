@@ -40,10 +40,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=6.1.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -164,12 +167,29 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\EconomicController.cs" />
+    <Compile Include="Controllers\GenererNySimuleringController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Abonnement.cs" />
+    <Compile Include="Models\Abonnent.cs" />
+    <Compile Include="Models\Afdeling.cs" />
+    <Compile Include="Models\Datapunkt.cs" />
+    <Compile Include="Models\Debitor.cs" />
+    <Compile Include="Models\EconomicUdtraek.cs" />
+    <Compile Include="Models\MySQL.cs" />
+    <Compile Include="Models\Transaktion.cs" />
+    <Compile Include="Models\Vare.cs" />
+    <Compile Include="Models\Varelinje.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service References\EconomicSOAP\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -255,6 +275,408 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountingPeriodData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountingPeriodHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountingPeriodStatus.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountingYearData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountingYearHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountType.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ActivityData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ActivityHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ArrayOfDecimal.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.BankPaymentTypeData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.BankPaymentTypeHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.BudgetFigureData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.BudgetFigureHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CashBookData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CashBookEntryData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CashBookEntryHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CashBookEntryType.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CashBookHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CompanyData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CompanyHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CostTypeData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CostTypeGroupData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CostTypeGroupHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CostTypeHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorContactData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorContactHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorEntryData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorEntryHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorGroupData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorGroupHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CreditorHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrencyData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrencyHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentInvoiceData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentInvoiceHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentInvoiceLineData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentInvoiceLineHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentSupplierInvoiceData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentSupplierInvoiceHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentSupplierInvoiceLineData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CurrentSupplierInvoiceLineHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.CustomField.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebitCredit.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorContactData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorContactHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorEntryData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorEntryHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorGroupData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorGroupHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DebtorHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DeliveryLocationData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DeliveryLocationHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DepartmentData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DepartmentHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DistributionKeyData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DistributionKeyHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DocumentArchiveCategoryData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DocumentArchiveCategoryHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.DocumentStatus.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EmployeeData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EmployeeGroupData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EmployeeGroupHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EmployeeHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EmployeeType.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EntryData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EntryHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.EntryType.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ExtendedVatZoneData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ExtendedVatZoneHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.InventoryLocationData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.InventoryLocationHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.InvoiceData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.InvoiceHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.InvoiceLineData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.InvoiceLineHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.KeyFigureCodeData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.KeyFigureCodeHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.MileageEntryData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.MileageEntryHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.OrderData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.OrderHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.OrderLineData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.OrderLineHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.PriceGroupData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.PriceGroupHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProductData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProductGroupData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProductGroupHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProductHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProductPriceData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProductPriceHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProjectData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProjectGroupData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProjectGroupHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ProjectHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.QuotationData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.QuotationHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.QuotationLineData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.QuotationLineHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ReportCodeData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ReportCodeHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ReportCodeSetData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ReportCodeSetHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ScannedDocumentData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.ScannedDocumentHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriberData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriberHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriptionCollection.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriptionData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriptionHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriptionInterval.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriptionLineData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SubscriptionLineHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SumIntervalData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.SumIntervalHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.TemplateCollectionData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.TemplateCollectionHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.TermOfPaymentData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.TermOfPaymentHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.TermOfPaymentType.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.TimeEntryData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.TimeEntryHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.UnitData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.UnitHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.VatAccountData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.VatAccountHandle.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.VatAccountType.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.VatZone.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Service References\EconomicSOAP\configuration91.svcinfo" />
+    <None Include="Service References\EconomicSOAP\configuration.svcinfo" />
+    <None Include="Service References\EconomicSOAP\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -283,13 +705,19 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Service References\EconomicSOAP\EconomicWebService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\EconomicSOAP\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
