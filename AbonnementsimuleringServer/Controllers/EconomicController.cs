@@ -39,8 +39,7 @@ namespace AbonnementsimuleringServer.Controllers
                 MySQL mySql = new MySQL(_economicAftalenummer);
                 mySql.KlargoerKundeTabeller();
                 mySql.IndsaetTransaktioner(transaktioner);
-                mySql.IndsaetRellationelData(economicUdtraek);
-                mySql.OpretMySqlView();
+                mySql.IndsaetRelationeltData(economicUdtraek);
             }
             catch (Exception e)
             {

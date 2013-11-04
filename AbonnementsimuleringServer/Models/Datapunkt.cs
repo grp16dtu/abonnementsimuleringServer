@@ -25,5 +25,13 @@ namespace AbonnementsimuleringServer.Models
             datapunkt.DKK = dkk;
             return datapunkt;
         }
+
+        public static Datapunkt DimKeyTidAntal(DateTime tid, decimal antal)
+        {
+            Datapunkt datapunkt = new Datapunkt();
+            datapunkt.Tid = tid;
+            datapunkt.Antal = antal;
+            return datapunkt;
+        }
     }
 }

@@ -17,11 +17,14 @@ namespace AbonnementsimuleringServer.Controllers
             List<Datapunkt> datapunkter = new List<Datapunkt>();
             
             MySQL mySql = new MySQL(387892);
-            DataSet dataSet = mySql.DatapunkterTidDkk();
+            DataSet datapunkterDatasaet = mySql.HentDatapunkterTidDkk();
 
-            foreach (DataRow item in dataSet.Tables[0].Rows)
+            foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
             {
-                datapunkter.Add(Datapunkt.DimKeyTidDKK((DateTime)item["tid"], (decimal)item["sum"]));
+                DateTime tid = (DateTime)raekke["tid"];
+                decimal dkk = (decimal)raekke["sum"];
+                Datapunkt datapunkt = Datapunkt.DimKeyTidDKK(tid, dkk);
+                datapunkter.Add(datapunkt);
             }
 
             return datapunkter;
