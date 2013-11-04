@@ -48,18 +48,18 @@ namespace AbonnementsimuleringServer.Models
             EksekverNonForespoergsel("TRUNCATE TABLE " + tabelNavn);
         }
 
-        public void IndsaetTransaktioner(List<Transaktion> transactions)
+        public void IndsaetTransaktioner(List<Transaktion> transaktioner)
         {
             Tilslut();
-            string mySqlStreng = "INSERT INTO transactions (yearMonth, departmentNumber, debtorNumber, productNumber, quantity, amount) VALUES";
+            string mySqlStreng = "INSERT INTO transaktioner (aarMaaned, debitornummer, varenummer, afdelingsnummer, antal, beloeb) VALUES";
 
-            foreach (Transaktion transaction in transactions)
+            foreach (Transaktion transaktion in transaktioner)
             {
-                mySqlStreng += "('" + transaction.AarMaaned.ToString("yyyyMMdd") + "', '" + transaction.Afdelingsnummer + "', '" + transaction.Debitornummer + "', '" + transaction.Varenummer + "', '" + transaction.Antal + "', '" + transaction.Beloeb + "'),";
+                mySqlStreng += "('" + transaktion.AarMaaned.ToString("yyyyMMdd") + "', '" + transaktion.Debitornummer + "', '" + transaktion.Varenummer + "', '" + transaktion.Afdelingsnummer + "', '" + transaktion.Antal + "', '" + transaktion.Beloeb + "'),";
             }
             
             mySqlStreng = mySqlStreng.Remove(mySqlStreng.Length - 1, 1); // Slet sidste overflødige komma
-            mySqlStreng += " ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity), amount= amount + VALUES(amount)";
+            mySqlStreng += " ON DUPLICATE KEY UPDATE antal = antal + VALUES(antal), beloeb = beloeb + VALUES(beloeb)";
             EksekverNonForespoergsel(mySqlStreng);
             Afbryd();
         }
@@ -114,9 +114,6 @@ namespace AbonnementsimuleringServer.Models
                     EksekverForespoergsel(forespoergsel);
                 }
             }
-
-
-
             Afbryd();
         }
 
