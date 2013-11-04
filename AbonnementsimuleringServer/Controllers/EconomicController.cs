@@ -6,6 +6,7 @@ using AbonnementsimuleringServer.EconomicSOAP;
 using AbonnementsimuleringServer.Models;
 using System.Security.Authentication;
 using System.Data;
+using System.Diagnostics;
 
 namespace AbonnementsimuleringServer.Controllers
 {
@@ -36,12 +37,15 @@ namespace AbonnementsimuleringServer.Controllers
                 transaktioner = GenererTransaktioner(abonnementer, antalSimuleringsmaaneder, brugerIndex);
 
                 MySQL mySql = new MySQL();
+                mySql.KlargoerKundeTabeller(_economicAftalenummer);
+                //mySql.SletKundeTabeller(_economicAftalenummer);
+                //mySql.HentAlt();
                 //mySql.IndsaetTransaktioner(transaktioner);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.ReadLine();
+                Debug.WriteLine("Exception: " + e.Message);
+                return null;
             }
             return transaktioner;
         }

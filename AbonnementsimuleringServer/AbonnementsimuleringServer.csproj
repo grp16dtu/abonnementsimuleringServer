@@ -165,6 +165,7 @@
     <Compile Include="Models\Debitor.cs" />
     <Compile Include="Models\EconomicUdtraek.cs" />
     <Compile Include="Models\MySQL.cs" />
+    <Compile Include="Models\TabelType.cs" />
     <Compile Include="Models\Transaktion.cs" />
     <Compile Include="Models\Vare.cs" />
     <Compile Include="Models\Varelinje.cs" />
