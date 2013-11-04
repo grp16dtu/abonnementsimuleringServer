@@ -18,12 +18,19 @@ namespace AbonnementsimuleringServer.Models
         public string Debitornavn { get; set; }
         public string Afdelingsnavn { get; set; }
 
-        public static Datapunkt DimKeyTidDKK(DateTime tid, decimal antal, decimal dkk)
+        public static Datapunkt DimKeyTidDKK(DateTime tid, decimal dkk)
+        {
+            Datapunkt datapunkt = new Datapunkt();
+            datapunkt.Tid = tid;
+            datapunkt.DKK = dkk;
+            return datapunkt;
+        }
+
+        public static Datapunkt DimKeyTidAntal(DateTime tid, decimal antal)
         {
             Datapunkt datapunkt = new Datapunkt();
             datapunkt.Tid = tid;
             datapunkt.Antal = antal;
-            datapunkt.DKK = dkk;
             return datapunkt;
         }
     }
