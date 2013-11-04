@@ -4,6 +4,7 @@ using System.Linq;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Diagnostics;
+using AbonnementsimuleringServer.EconomicSOAP;
 
 namespace AbonnementsimuleringServer.Models
 {
@@ -14,11 +15,14 @@ namespace AbonnementsimuleringServer.Models
         private string _mySqlDatabase { get; set; }
         private string _mySqlBrugernavn { get; set; }
         private string _mySqlKodeord { get; set; }
+        private int _economicAftalenummer;
 
         private List<TabelType> _tabelTyper = new List<TabelType>();
 
-        public MySQL()
+        public MySQL(int economicAftalenummer)
         {
+            _economicAftalenummer = economicAftalenummer;
+
             _mySqlServerUrl = "MYSQL5004.smarterasp.net";
             _mySqlDatabase = "db_9ac26b_abosim";
             _mySqlBrugernavn = "9ac26b_abosim";
@@ -51,7 +55,7 @@ namespace AbonnementsimuleringServer.Models
         public void IndsaetTransaktioner(List<Transaktion> transaktioner)
         {
             Tilslut();
-            string mySqlStreng = "INSERT INTO transaktioner (aarMaaned, debitornummer, varenummer, afdelingsnummer, antal, beloeb) VALUES";
+            string mySqlStreng = "INSERT INTO " + _economicAftalenummer + "transaktioner (aarMaaned, debitornummer, varenummer, afdelingsnummer, antal, beloeb) VALUES";
 
             foreach (Transaktion transaktion in transaktioner)
             {
@@ -62,6 +66,77 @@ namespace AbonnementsimuleringServer.Models
             mySqlStreng += " ON DUPLICATE KEY UPDATE antal = antal + VALUES(antal), beloeb = beloeb + VALUES(beloeb)";
             EksekverNonForespoergsel(mySqlStreng);
             Afbryd();
+        }
+
+        public void IndsaetRellationelData(EconomicUdtraek economicUdtraek)
+        {
+            Tilslut();
+
+            IndsaetVarer(economicUdtraek);
+            IndsaetDebitorer(economicUdtraek);
+            IndsaetAfdelinger(economicUdtraek);
+
+            Afbryd();
+        }
+
+        private void IndsaetVarer(EconomicUdtraek economicUdtraek)
+        {
+            string mySqlStreng = "INSERT INTO " + _economicAftalenummer + "varer (varenummer, varenavn, varekostpris, varesalgspris, varevolume) VALUES";
+
+            foreach (ProductData vare in economicUdtraek.Produkter)
+            {
+                mySqlStreng += "('" + vare.Number + "', '" + vare.Name + "', '" + vare.CostPrice + "', '" + vare.SalesPrice + "', '" + vare.Volume + "'),";
+            }
+
+            mySqlStreng = mySqlStreng.Remove(mySqlStreng.Length - 1, 1); // Slet sidste overflødige komma
+            EksekverNonForespoergsel(mySqlStreng);
+        }
+
+        private void IndsaetDebitorer(EconomicUdtraek economicUdtraek)
+        {
+            string mySqlStreng = "INSERT INTO " + _economicAftalenummer + "debitorer (debitornummer, debitornavn, debitoradresse, debitorbynavn, debitorland, debitoremail, debitorpostnummer) VALUES";
+
+            foreach (DebtorData debitor in economicUdtraek.Debitorer)
+            {
+                mySqlStreng += "('" + debitor.Number + "', '" + debitor.Name + "', '" + debitor.Address + "', '" + debitor.City + "', '" + debitor.Country + "', '" + debitor.Email + "', '" + debitor.PostalCode + "'),";
+            }
+
+            mySqlStreng = mySqlStreng.Remove(mySqlStreng.Length - 1, 1); // Slet sidste overflødige komma
+            EksekverNonForespoergsel(mySqlStreng);
+        }
+
+        private void IndsaetAfdelinger(EconomicUdtraek economicUdtraek)
+        {
+            string mySqlStreng = "INSERT INTO " + _economicAftalenummer + "afdelinger (afdelingsnummer, afdelingsnavn) VALUES";
+
+            foreach (DepartmentData afdeling in economicUdtraek.Afdelinger)
+            {
+                mySqlStreng += "('" + afdeling.Number + "', '" + afdeling.Name + "'),";
+            }
+
+            mySqlStreng = mySqlStreng.Remove(mySqlStreng.Length - 1, 1); // Slet sidste overflødige komma
+            EksekverNonForespoergsel(mySqlStreng);
+        }
+
+        public void OpretMySqlView()
+        {
+            Tilslut();
+
+            string forespoergsel = "CREATE VIEW " + _economicAftalenummer + "simuleringsdata AS SELECT aarMaaned, antal, beloeb, varekostpris, varesalgspris, varevolume, debitornavn, debitoradresse, debitorbynavn, debitorland, debitoremail, debitorpostnummer, af.afdelingsnavn FROM " + _economicAftalenummer + "transaktioner as tr NATURAL JOIN 387892varer as va NATURAL JOIN " + _economicAftalenummer + "debitorer as de LEFT JOIN " + _economicAftalenummer + "afdelinger af ON tr.afdelingsnummer = af.afdelingsnummer";
+            EksekverNonForespoergsel(forespoergsel);
+
+            Afbryd();
+        }
+
+        public DataSet DatapunkterTidDkk()
+        {
+            Tilslut();
+
+            DataSet dataSet = EksekverForespoergsel("SELECT SUM(beloeb) as sum, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY aarMaaned");
+
+            Afbryd();
+
+            return dataSet;
         }
 
         public DataSet HentAlt()
@@ -96,13 +171,13 @@ namespace AbonnementsimuleringServer.Models
             return null;
         }
 
-        public void KlargoerKundeTabeller(int aftaleNummer)
+        public void KlargoerKundeTabeller()
         {
             Tilslut();
 
             foreach (var tabel in _tabelTyper)
             {
-                string tabelNavn = aftaleNummer + tabel.Navn;
+                string tabelNavn = _economicAftalenummer + tabel.Navn;
 
                 if (TabelEksisterer(tabelNavn))
                 {
@@ -117,16 +192,18 @@ namespace AbonnementsimuleringServer.Models
             Afbryd();
         }
 
-        public void SletKundeTabeller(int aftaleNummer)
+        public void SletKundeTabeller()
         {
             Tilslut();
 
             foreach (var tabel in _tabelTyper)
             {
-                string tabelNavn = aftaleNummer + tabel.Navn;
+                string tabelNavn = _economicAftalenummer + tabel.Navn;
                 string forespoergsel = "DROP TABLE " + tabelNavn;
                 EksekverNonForespoergsel(forespoergsel);
             }
+
+            EksekverNonForespoergsel("DROP VIEW " + _economicAftalenummer + "simuleringsdata");
 
             Afbryd();
         }
@@ -140,9 +217,9 @@ namespace AbonnementsimuleringServer.Models
 
         private void OpretTabelTyper()
         {
-            _tabelTyper.Add(new TabelType("varer", "(nummer VARCHAR(25), navn VARCHAR(300), kostpris DECIMAL, salgspris DECIMAL, volume DECIMAL, afdelingsnummer INT, PRIMARY KEY (nummer))"));
-            _tabelTyper.Add(new TabelType("debitorer", "(nummer VARCHAR(9), navn VARCHAR(255), adresse VARCHAR(255), bynavn VARCHAR(255), land VARCHAR(255), email VARCHAR(255), postnummer VARCHAR(10), PRIMARY KEY (nummer))"));
-            _tabelTyper.Add(new TabelType("afdelinger", "(nummer INT, navn VARCHAR(255), PRIMARY KEY (nummer))"));
+            _tabelTyper.Add(new TabelType("varer", "(varenummer VARCHAR(25), varenavn VARCHAR(300), varekostpris DECIMAL, varesalgspris DECIMAL, varevolume DECIMAL, PRIMARY KEY (varenummer))"));
+            _tabelTyper.Add(new TabelType("debitorer", "(debitornummer VARCHAR(9), debitornavn VARCHAR(255), debitoradresse VARCHAR(255), debitorbynavn VARCHAR(255), debitorland VARCHAR(255), debitoremail VARCHAR(255), debitorpostnummer VARCHAR(10), PRIMARY KEY (debitornummer))"));
+            _tabelTyper.Add(new TabelType("afdelinger", "(afdelingsnummer INT, afdelingsnavn VARCHAR(255), PRIMARY KEY (afdelingsnummer))"));
             _tabelTyper.Add(new TabelType("transaktioner", "(aarMaaned DATETIME, debitornummer VARCHAR(10), varenummer VARCHAR(26), afdelingsnummer INT, antal DECIMAL, beloeb DECIMAL, PRIMARY KEY (aarMaaned, debitornummer, varenummer, afdelingsnummer))"));
         }
     }

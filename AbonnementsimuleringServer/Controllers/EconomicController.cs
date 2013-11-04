@@ -36,11 +36,11 @@ namespace AbonnementsimuleringServer.Controllers
                 List<Abonnement> abonnementer = ForbindData(economicUdtraek);
                 transaktioner = GenererTransaktioner(abonnementer, antalSimuleringsmaaneder, brugerIndex);
 
-                MySQL mySql = new MySQL();
-                mySql.KlargoerKundeTabeller(_economicAftalenummer);
-                //mySql.SletKundeTabeller(_economicAftalenummer);
-                //mySql.HentAlt();
-                //mySql.IndsaetTransaktioner(transaktioner);
+                MySQL mySql = new MySQL(_economicAftalenummer);
+                mySql.KlargoerKundeTabeller();
+                mySql.IndsaetTransaktioner(transaktioner);
+                mySql.IndsaetRellationelData(economicUdtraek);
+                mySql.OpretMySqlView();
             }
             catch (Exception e)
             {

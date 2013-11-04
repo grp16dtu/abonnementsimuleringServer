@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbonnementsimuleringServer.Models
 {
-    class EconomicUdtraek
+    public class EconomicUdtraek
     {
         public SubscriptionData[] Abonnementer { get; set; }
         public SubscriberData[] Abonnenter { get; set; }
