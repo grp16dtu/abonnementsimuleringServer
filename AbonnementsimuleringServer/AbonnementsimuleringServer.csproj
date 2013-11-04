@@ -176,6 +176,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AbonnementsimuleringServer.publish.xml" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountData.datasource">
@@ -574,6 +575,7 @@
     <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.VatZone.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="Service References\EconomicSOAP\configuration91.svcinfo" />
     <None Include="Service References\EconomicSOAP\configuration.svcinfo" />
     <None Include="Service References\EconomicSOAP\Reference.svcmap">
