@@ -37,7 +37,7 @@ namespace AbonnementsimuleringServer.Controllers
                 transaktioner = GenererTransaktioner(abonnementer, antalSimuleringsmaaneder, brugerIndex);
 
                 MySQL mySql = new MySQL(_economicAftalenummer);
-                mySql.KlargoerKundeTabeller();
+                mySql.KlargoerTabeller();
                 mySql.IndsaetTransaktioner(transaktioner);
                 mySql.IndsaetRelationeltData(economicUdtraek);
             }
@@ -327,8 +327,8 @@ namespace AbonnementsimuleringServer.Controllers
                 Decimal forhold = (Decimal)(dageStartSlut / interval);
                 varepris = varepris * forhold;
 
-                Console.WriteLine("Forhold: " + forhold);
-                Console.WriteLine("Forholdsmæssigt abonnement - Interval: {0}, Rest: {1}, Pris: {2}", interval, dageStartSlut, varepris);
+                //Console.WriteLine("Forhold: " + forhold);
+                //Console.WriteLine("Forholdsmæssigt abonnement - Interval: {0}, Rest: {1}, Pris: {2}", interval, dageStartSlut, varepris);
             }
 
             // Eventuel rabat

@@ -10,7 +10,8 @@ namespace AbonnementsimuleringServer.Models
 {
     public class MySQL
     {
-        public enum Tabelnavne {Varer, Afdelinger, Debitorer }
+        private enum Tabelnavne {Varer, Afdelinger, Debitorer }
+        private List<Kundetabel> _kundetabeller = new List<Kundetabel>();
 
         private MySqlConnection _mySqlForbindelse { get; set; }
         private string _mySqlServerUrl { get; set; }
@@ -18,8 +19,6 @@ namespace AbonnementsimuleringServer.Models
         private string _mySqlBrugernavn { get; set; }
         private string _mySqlKodeord { get; set; }
         private int _economicAftalenummer;
-
-        private List<TabelType> _tabelTyper = new List<TabelType>();
 
         public MySQL(int economicAftalenummer)
         {
@@ -29,163 +28,173 @@ namespace AbonnementsimuleringServer.Models
             _mySqlBrugernavn = "9ac26b_abosim";
             _mySqlKodeord = "Kode1234";
             Initialiser();
-            OpretTabelTyper();
         }
 
         private void Initialiser()
         {
-            string tilslutning = "SERVER=" + _mySqlServerUrl + ";" + "DATABASE=" + _mySqlDatabase + ";" + "UID=" + _mySqlBrugernavn + ";" + "PASSWORD=" + _mySqlKodeord + ";";
-            _mySqlForbindelse = new MySqlConnection(tilslutning);
+            InitialiserForbindelse();
+            InitialiserKundetabeller();
         }
 
-        private void Tilslut()
+        private void InitialiserForbindelse()
         {
-            _mySqlForbindelse.Open();
+            _mySqlForbindelse = new MySqlConnection("SERVER=" + _mySqlServerUrl + ";" + "DATABASE=" + _mySqlDatabase + ";" + "UID=" + _mySqlBrugernavn + ";" + "PASSWORD=" + _mySqlKodeord + ";");
         }
 
-        private void Afbryd()
+        private void InitialiserKundetabeller()
         {
-            _mySqlForbindelse.Close();
-        }
-
-        private void ToemTabel(string tabelNavn)
-        {
-            EksekverNonForespoergsel("TRUNCATE TABLE " + tabelNavn);
+            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "varer", "CREATE TABLE " + _economicAftalenummer + "varer (varenummer VARCHAR(25), varenavn VARCHAR(300), varekostpris DECIMAL, varesalgspris DECIMAL, varevolume DECIMAL, PRIMARY KEY (varenummer))"));
+            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "debitorer", "CREATE TABLE " + _economicAftalenummer + "debitorer (debitornummer VARCHAR(9), debitornavn VARCHAR(255), debitoradresse VARCHAR(255), debitorbynavn VARCHAR(255), debitorland VARCHAR(255), debitoremail VARCHAR(255), debitorpostnummer VARCHAR(10), PRIMARY KEY (debitornummer))"));
+            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "afdelinger", "CREATE TABLE " + _economicAftalenummer + "afdelinger (afdelingsnummer INT, afdelingsnavn VARCHAR(255), PRIMARY KEY (afdelingsnummer))"));
+            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "transaktioner", "CREATE TABLE " + _economicAftalenummer + "transaktioner (aarMaaned DATETIME, debitornummer VARCHAR(10), varenummer VARCHAR(26), afdelingsnummer INT, antal DECIMAL, beloeb DECIMAL, PRIMARY KEY (aarMaaned, debitornummer, varenummer, afdelingsnummer))"));
         }
 
         public void IndsaetTransaktioner(List<Transaktion> transaktioner)
         {
-            Tilslut();
+            TilslutMysql();
             string mySqlStreng = MysqlStrengbyggerTransaktioner(transaktioner);
-            EksekverNonForespoergsel(mySqlStreng);
-            Afbryd();
+            TilDatabase(mySqlStreng);
+            AfbrydMysql();
         }
 
         public void IndsaetRelationeltData(EconomicUdtraek economicUdtraek)
         {
-            Tilslut();
+            TilslutMysql();
             IndsaetVarer(economicUdtraek);
             IndsaetDebitorer(economicUdtraek);
             IndsaetAfdelinger(economicUdtraek);
-            Afbryd();
+            AfbrydMysql();
         }
 
         public DataSet HentDatapunkterTidDkk()
         {
-            Tilslut();
-            DataSet dataSet = EksekverForespoergsel("SELECT SUM(beloeb) as sum, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY aarMaaned");
-            Afbryd();
-            return dataSet;
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as sum, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY aarMaaned");
+            AfbrydMysql();
+            return datasaet;
         }
 
         public DataSet HentDatapunkterTidAntal()
         {
-            Tilslut();
-            DataSet dataSet = EksekverForespoergsel("SELECT SUM(antal) as antal, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY aarMaaned");
-            Afbryd();
-            return dataSet;
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY aarMaaned");
+            AfbrydMysql();
+            return datasaet;
         }
 
-        public void KlargoerKundeTabeller()
+        public void KlargoerTabeller()
         {
-            Tilslut();
-            foreach (var tabel in _tabelTyper)
+            TilslutMysql();
+            foreach (var tabel in _kundetabeller)
             {
-                string tabelNavn = _economicAftalenummer + tabel.Navn;
+                if (TabelEksisterer(tabel.Navn))
+                    ToemTabel(tabel.Navn);
 
-                if (TabelEksisterer(tabelNavn))
-                    ToemTabel(tabelNavn);
-                
                 else
-                {
-                    string forespoergsel = "CREATE TABLE " + tabelNavn + tabel.SqlOpret;
-                    EksekverForespoergsel(forespoergsel);
-                }
+                    OpretTabel(tabel.Oprettelsesstreng);
             }
 
-            OpretMySqlView();
-            Afbryd();
+            OpretView();
+            AfbrydMysql();
         }
 
         public void SletKundeTabeller()
         {
-            Tilslut();
-            foreach (var tabel in _tabelTyper)
+            TilslutMysql();
+            foreach (var tabel in _kundetabeller)
             {
-                string tabelNavn = _economicAftalenummer + tabel.Navn;
-                string forespoergsel = "DROP TABLE " + tabelNavn;
-                EksekverNonForespoergsel(forespoergsel);
+                SletTabel(tabel.Navn);
             }
-            EksekverNonForespoergsel("DROP VIEW " + _economicAftalenummer + "simuleringsdata");
-            Afbryd();
+            SletView();
+            AfbrydMysql();
         }
 
-        private void OpretMySqlView()
+        private void TilslutMysql()
         {
-            string forespoergsel = "CREATE OR REPLACE VIEW " + _economicAftalenummer + "simuleringsdata AS SELECT aarMaaned, antal, beloeb, varekostpris, varesalgspris, varevolume, debitornavn, debitoradresse, debitorbynavn, debitorland, debitoremail, debitorpostnummer, af.afdelingsnavn FROM " + _economicAftalenummer + "transaktioner as tr NATURAL JOIN 387892varer as va NATURAL JOIN " + _economicAftalenummer + "debitorer as de LEFT JOIN " + _economicAftalenummer + "afdelinger af ON tr.afdelingsnummer = af.afdelingsnummer";
-            EksekverNonForespoergsel(forespoergsel);
+            _mySqlForbindelse.Open();
+        }
+
+        private void AfbrydMysql()
+        {
+            _mySqlForbindelse.Close();
+        }
+
+        private void OpretTabel(string oprettelsesstreng)
+        {
+            TilDatabase(oprettelsesstreng);
+        }
+
+        private void ToemTabel(string tabelnavn)
+        {
+            TilDatabase("TRUNCATE TABLE " + tabelnavn);
+        }
+
+        private void SletTabel(string tabelnavn)
+        {
+            TilDatabase("DROP TABLE " + tabelnavn);
+        }
+
+        private void OpretView()
+        {
+            TilDatabase("CREATE OR REPLACE VIEW " + _economicAftalenummer + "simuleringsdata AS SELECT aarMaaned, antal, beloeb, varekostpris, varesalgspris, varevolume, debitornavn, debitoradresse, debitorbynavn, debitorland, debitoremail, debitorpostnummer, af.afdelingsnavn FROM " + _economicAftalenummer + "transaktioner as tr NATURAL JOIN 387892varer as va NATURAL JOIN " + _economicAftalenummer + "debitorer as de LEFT JOIN " + _economicAftalenummer + "afdelinger af ON tr.afdelingsnummer = af.afdelingsnummer");
+        }
+
+        private void SletView()
+        {
+            TilDatabase("DROP VIEW " + _economicAftalenummer + "simuleringsdata");
         }
 
         private void IndsaetVarer(EconomicUdtraek economicUdtraek)
         {
             string mySqlStreng = MysqlStrengbyggerRelationeltData(economicUdtraek, Tabelnavne.Varer);
-            EksekverNonForespoergsel(mySqlStreng);
+            TilDatabase(mySqlStreng);
         }
 
         private void IndsaetDebitorer(EconomicUdtraek economicUdtraek)
         {
             string mySqlStreng = MysqlStrengbyggerRelationeltData(economicUdtraek, Tabelnavne.Debitorer);
-            EksekverNonForespoergsel(mySqlStreng);
+            TilDatabase(mySqlStreng);
         }
 
         private void IndsaetAfdelinger(EconomicUdtraek economicUdtraek)
         {
             string mySqlStreng = MysqlStrengbyggerRelationeltData(economicUdtraek, Tabelnavne.Afdelinger);
-            EksekverNonForespoergsel(mySqlStreng);
+            TilDatabase(mySqlStreng);
         }
 
-        private void EksekverNonForespoergsel(string mySqlStreng)
+        private void TilDatabase(string mySqlStreng)
         {
             MySqlCommand mySqlKommando = new MySqlCommand(mySqlStreng, _mySqlForbindelse);
             mySqlKommando.ExecuteNonQuery();
         }
 
-        private DataSet EksekverForespoergsel(string mySQLForespoergsel)
+        private DataSet FraDatabase(string forespoergsel)
         {
-            MySqlCommand cmd = new MySqlCommand(mySQLForespoergsel, _mySqlForbindelse);
-            MySqlDataReader dataReader = cmd.ExecuteReader();
+            MySqlCommand mySqlKommando = new MySqlCommand(forespoergsel, _mySqlForbindelse);
+            MySqlDataReader mySqlData = mySqlKommando.ExecuteReader();
 
-            if (dataReader.HasRows)
+            if (mySqlData.HasRows)
             {
                 DataSet datasaet = new DataSet();
-                datasaet.Load(dataReader, LoadOption.PreserveChanges, "MySqlData");
+                datasaet.Load(mySqlData, LoadOption.PreserveChanges, "MySqlData");
                 return datasaet;
             }
 
-            dataReader.Close();
+            mySqlData.Close();
             return null;
         }
 
         private bool TabelEksisterer(string tabelNavn)
         {
-            string forespoergsel = "SHOW TABLES LIKE '" + tabelNavn + "'";
-            DataSet resultat = EksekverForespoergsel(forespoergsel);
+            DataSet resultat = FraDatabase("SHOW TABLES LIKE '" + tabelNavn + "'");
             return resultat != null;
         } 
 
-        private void OpretTabelTyper()
-        {
-            _tabelTyper.Add(new TabelType("varer", "(varenummer VARCHAR(25), varenavn VARCHAR(300), varekostpris DECIMAL, varesalgspris DECIMAL, varevolume DECIMAL, PRIMARY KEY (varenummer))"));
-            _tabelTyper.Add(new TabelType("debitorer", "(debitornummer VARCHAR(9), debitornavn VARCHAR(255), debitoradresse VARCHAR(255), debitorbynavn VARCHAR(255), debitorland VARCHAR(255), debitoremail VARCHAR(255), debitorpostnummer VARCHAR(10), PRIMARY KEY (debitornummer))"));
-            _tabelTyper.Add(new TabelType("afdelinger", "(afdelingsnummer INT, afdelingsnavn VARCHAR(255), PRIMARY KEY (afdelingsnummer))"));
-            _tabelTyper.Add(new TabelType("transaktioner", "(aarMaaned DATETIME, debitornummer VARCHAR(10), varenummer VARCHAR(26), afdelingsnummer INT, antal DECIMAL, beloeb DECIMAL, PRIMARY KEY (aarMaaned, debitornummer, varenummer, afdelingsnummer))"));
-        }
-
-        private string MysqlStrengbyggerRelationeltData(EconomicUdtraek economicUdtraek, Tabelnavne tabeller)
+        private string MysqlStrengbyggerRelationeltData(EconomicUdtraek economicUdtraek, Tabelnavne tabelnavne)
         {
             string mySqlStreng = "START TRANSACTION; ";
 
-            switch (tabeller)
+            switch (tabelnavne)
             {
                 case Tabelnavne.Varer:
                     mySqlStreng = "INSERT INTO " + _economicAftalenummer + "varer (varenummer, varenavn, varekostpris, varesalgspris, varevolume) VALUES";

@@ -10,17 +10,18 @@ namespace AbonnementsimuleringServer.Controllers
 {
     public class SletKundeTabellerController : ApiController
     {
-        public bool Get(int id) 
+        public string Get(int id) 
         {
+            int economicAftalenummer = id;
             try
             {
-                MySQL mySql = new MySQL(id);
+                MySQL mySql = new MySQL(economicAftalenummer);
                 mySql.SletKundeTabeller();
-                return true;
+                return "Tabeller slettet";
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return false;
+                return "Fejl: " + e.Message;
             }
         }
     }
