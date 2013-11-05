@@ -5,15 +5,15 @@ using System.Web;
 
 namespace AbonnementsimuleringServer.Models
 {
-    public class TabelType
+    public class Kundetabel
     {
         public string Navn { get; set; }
-        public string SqlOpret { get; set; }
+        public string Oprettelsesstreng { get; set; }
 
-        public TabelType(string navn, string sqlOpret)
+        public Kundetabel(string navn, string oprettelsesstreng)
         {
             Navn = navn;
-            SqlOpret = sqlOpret;
+            Oprettelsesstreng = oprettelsesstreng;
         }
     }
 }
