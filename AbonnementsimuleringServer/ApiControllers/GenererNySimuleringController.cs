@@ -12,10 +12,21 @@ namespace AbonnementsimuleringServer.Controllers
     public class GenererNySimuleringController : ApiController
     {
         // GET api/generernysimulering
-        public IEnumerable<Transaktion> Get(int id)
+        public HttpResponseMessage Get(int id)
         {
-            EconomicController economic = new EconomicController(387892, "DTU", "Trustno1");
-            return economic.GenererNySimulering(12, 1);
+            try
+            {
+                EconomicController economic = new EconomicController(387892, "DTU", "Trustno1");
+                List<Transaktion> transaktioner = economic.GenererNySimulering(12, 1);
+                return Request.CreateResponse(HttpStatusCode.OK, transaktioner);
+            }
+
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
+            }
+
+             
         }
     }
 }

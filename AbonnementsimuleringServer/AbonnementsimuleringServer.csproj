@@ -181,7 +181,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AbonnementsimuleringServer.publish.xml" />
     <Content Include="Css\bootstrap.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />

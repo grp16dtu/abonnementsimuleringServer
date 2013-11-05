@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,22 +12,29 @@ namespace AbonnementsimuleringServer.ApiControllers
 {
     public class DatapunkterTidAntalController : ApiController
     {
-        public List<Datapunkt> Get()
+        public HttpResponseMessage Get()
         {
             List<Datapunkt> datapunkter = new List<Datapunkt>();
 
-            MySQL mySql = new MySQL(387892);
-            DataSet datapunkterDatasaet = mySql.HentDatapunkterTidAntal();
-
-            foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
+            try
             {
-                DateTime tid = (DateTime)raekke["tid"];
-                decimal antal = (decimal)raekke["antal"];
-                Datapunkt datapunkt = Datapunkt.DimKeyTidAntal(tid, antal);
-                datapunkter.Add(datapunkt);
+                MySQL mySql = new MySQL(387892);
+                DataSet datapunkterDatasaet = mySql.HentDatapunkterTidAntal();
+
+                foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
+                {
+                    DateTime tid = (DateTime)raekke["tid"];
+                    decimal antal = (decimal)raekke["antal"];
+                    Datapunkt datapunkt = Datapunkt.DimKeyTidAntal(tid, antal);
+                    datapunkter.Add(datapunkt);
+                }
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
             }
 
-            return datapunkter;
+            return Request.CreateResponse(HttpStatusCode.OK, datapunkter); 
         }
     }
 }

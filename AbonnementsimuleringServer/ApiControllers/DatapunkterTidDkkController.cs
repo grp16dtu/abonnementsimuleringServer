@@ -12,22 +12,29 @@ namespace AbonnementsimuleringServer.Controllers
 {
     public class DatapunkterTidDkkController : ApiController
     {
-        public List<Datapunkt> Get()
+        public HttpResponseMessage Get()
         {
             List<Datapunkt> datapunkter = new List<Datapunkt>();
-            
-            MySQL mySql = new MySQL(387892);
-            DataSet datapunkterDatasaet = mySql.HentDatapunkterTidDkk();
 
-            foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
+            try
             {
-                DateTime tid = (DateTime)raekke["tid"];
-                decimal dkk = (decimal)raekke["sum"];
-                Datapunkt datapunkt = Datapunkt.DimKeyTidDKK(tid, dkk);
-                datapunkter.Add(datapunkt);
+                MySQL mySql = new MySQL(387892);
+                DataSet datapunkterDatasaet = mySql.HentDatapunkterTidDkk();
+
+                foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
+                {
+                    DateTime tid = (DateTime)raekke["tid"];
+                    decimal dkk = (decimal)raekke["sum"];
+                    Datapunkt datapunkt = Datapunkt.DimKeyTidDKK(tid, dkk);
+                    datapunkter.Add(datapunkt);
+                }
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
             }
 
-            return datapunkter;
+            return Request.CreateResponse(HttpStatusCode.OK, datapunkter); 
         }
     }
 }
