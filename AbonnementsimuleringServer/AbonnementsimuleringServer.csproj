@@ -159,6 +159,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="ApiControllers\DatapunkterTidDkkController.cs" />
+    <Compile Include="Autorisation\ApiIdentity.cs" />
+    <Compile Include="Autorisation\BasicAuthenticationAttribute.cs" />
     <Compile Include="Controllers\EconomicController.cs" />
     <Compile Include="ApiControllers\GenererNySimuleringController.cs" />
     <Compile Include="ApiControllers\SletKundeTabellerController.cs" />
@@ -176,7 +178,6 @@
     <Compile Include="Models\Transaktion.cs" />
     <Compile Include="Models\Vare.cs" />
     <Compile Include="Models\Varelinje.cs" />
-    <Compile Include="Autorisation\GodkendBruger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\EconomicSOAP\Reference.cs">
       <AutoGen>True</AutoGen>

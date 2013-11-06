@@ -10,6 +10,7 @@ using System.Web.Http;
 
 namespace AbonnementsimuleringServer.Controllers
 {
+    
     public class DatapunkterTidDkkController : ApiController
     {
         public HttpResponseMessage Get()

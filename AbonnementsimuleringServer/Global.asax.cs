@@ -25,7 +25,8 @@ namespace AbonnementsimuleringServer
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // AUTH
-            //GlobalConfiguration.Configuration.MessageHandlers.Add(new MyBasicAuthenticationHandler());
+//            GlobalConfiguration.Configuration.MessageHandlers.Add(new MyBasicAuthenticationHandler());
+            
  
         }
     }
