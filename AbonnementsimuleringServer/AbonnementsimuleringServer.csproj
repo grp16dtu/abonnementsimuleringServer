@@ -153,13 +153,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiControllers\BrugerController.cs" />
-    <Compile Include="ApiControllers\DatapunkterTidAntalController.cs" />
+    <Compile Include="ApiControllers\DatapunkterController.cs" />
     <Compile Include="ApiControllers\HomeController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="ApiControllers\DatapunkterTidDkkController.cs" />
     <Compile Include="Autorisation\ApiIdentity.cs" />
     <Compile Include="Autorisation\BasicAuthenticationAttribute.cs" />
     <Compile Include="Controllers\EconomicController.cs" />
