@@ -284,5 +284,35 @@ namespace AbonnementsimuleringServer.Models
 
             return null;
         }
+
+        public void OpretBruger(Bruger bruger, int economicAftalenummer)
+        {
+            string forespoergsel;
+            int economicAftalenummerId;
+            DataSet dataSet;
+            TilslutMysql();
+
+            // Hent economicAftlenummerId ud fra economicAftlenummer
+            string mySqlFindId = "SELECT economicAftalenummerId FROM economicAftalenumre WHERE aftalenummer = '" + economicAftalenummer + "'";
+            dataSet = FraDatabase(mySqlFindId);
+            if(dataSet != null)
+            {
+                economicAftalenummerId = (int)dataSet.Tables["MySqlData"].Rows[0]["economicAftalenummerId"];
+            }
+            else
+            {
+                forespoergsel = "INSERT INTO economicAftalnumre (aftalenummer) VALUES ('" + economicAftalenummer + "')";
+                TilDatabase(forespoergsel);
+                dataSet = FraDatabase(mySqlFindId);
+                economicAftalenummerId = (int)dataSet.Tables["MySqlData"].Rows[0]["economicAftalenummerId"];
+            }
+
+            //Indsæt bruger
+            forespoergsel = "INSERT INTO brugere (brugernavn, kodeord, brugerMedarbejdernummer, brugerFornavn, brugerEfternavn, economicAftalenummerId, erAnsvarlig) VALUES ";
+            forespoergsel = forespoergsel + "('" + bruger.Brugernavn + "', '" + bruger.Kodeord + "', '" + bruger.MedarbejderNummer + "', '" + bruger.Fornavn + "', '" + bruger.Efternavn + "', '" + economicAftalenummerId + "', '" + Convert.ToInt32(bruger.Ansvarlig) + "')";
+            Debug.WriteLine(forespoergsel);
+            TilDatabase(forespoergsel);
+            AfbrydMysql();
+        }
     }
 }

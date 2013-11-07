@@ -1,13 +1,17 @@
-﻿using AbonnementsimuleringServer.Models;
+﻿using AbonnementsimuleringServer.Autorisation;
+using AbonnementsimuleringServer.Helpers;
+using AbonnementsimuleringServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace AbonnementsimuleringServer.ApiControllers
 {
+    [BasicAuthentication]
     public class BrugerController : ApiController
     {
         [HttpGet]
@@ -27,9 +31,14 @@ namespace AbonnementsimuleringServer.ApiControllers
 
         [HttpGet]
         [ActionName("Opret")]
-        public HttpResponseMessage Opret(Bruger bruger)
+        public HttpResponseMessage Opret([FromUri]Bruger bruger)
         {
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, "FEJL Opret");
+            int economicAftalenummer = Vaerktoejer.FindEconomicAftalenummer(HttpContext.Current.User.Identity.Name);
+
+            MySQL mySql = new MySQL();
+            mySql.OpretBruger(bruger, economicAftalenummer);
+            
+            return Request.CreateErrorResponse(HttpStatusCode.OK, "Oprettet");
         }
 
         [HttpGet]
