@@ -14,7 +14,7 @@ namespace AbonnementsimuleringServer.ApiControllers
 {
     public class DatapunkterTidAntalController : ApiController
     {
-        //[BasicAuthentication]
+        [BasicAuthentication]
         public HttpResponseMessage Get()
         {
             List<Datapunkt> datapunkter = new List<Datapunkt>();

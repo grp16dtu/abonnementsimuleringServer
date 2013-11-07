@@ -30,6 +30,15 @@ namespace AbonnementsimuleringServer.Models
             Initialiser();
         }
 
+        public MySQL()
+        {
+            _mySqlServerUrl = "MYSQL5004.smarterasp.net";
+            _mySqlDatabase = "db_9ac26b_abosim";
+            _mySqlBrugernavn = "9ac26b_abosim";
+            _mySqlKodeord = "Kode1234";
+            Initialiser();
+        }
+
         private void Initialiser()
         {
             InitialiserForbindelse();
@@ -244,6 +253,36 @@ namespace AbonnementsimuleringServer.Models
             mySqlStreng = mySqlStreng.Remove(mySqlStreng.Length - 1, 1);
             mySqlStreng += " ON DUPLICATE KEY UPDATE antal = antal + VALUES(antal), beloeb = beloeb + VALUES(beloeb); COMMIT;";
             return mySqlStreng;
+        }
+
+        public int? HentEconomicAftalenummer(string brugernavn, string kodeord)
+        {
+            TilslutMysql();
+            string forespoergsel = "SELECT kodeord, aftalenummer FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
+            DataSet dataSet = FraDatabase(forespoergsel);
+            AfbrydMysql();
+
+            if (dataSet != null && dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString() == kodeord)
+            {
+                return (int)(dataSet.Tables["MySqlData"].Rows[0]["aftalenummer"]);
+            }
+
+            return null;
+        }
+
+        public DataSet HentBruger(string brugernavn, string kodeord)
+        {
+            TilslutMysql();
+            string forespoergsel = "SELECT * FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
+            DataSet dataSet = FraDatabase(forespoergsel);
+            AfbrydMysql();
+
+            if (dataSet != null && dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString() == kodeord)
+            {
+                return dataSet;
+            }
+
+            return null;
         }
     }
 }

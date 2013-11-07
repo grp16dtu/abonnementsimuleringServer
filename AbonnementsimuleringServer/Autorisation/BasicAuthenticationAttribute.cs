@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbonnementsimuleringServer.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,43 +17,51 @@ namespace AbonnementsimuleringServer.Autorisation
             if (actionContext.Request.Headers.Authorization == null)
             {
                 actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
-                throw new Exception();
+                //throw new Exception();
             }
 
             else
             {
-                string authToken = actionContext.Request.Headers.Authorization.Parameter;
-                string decodedToken = Encoding.UTF8.GetString(Convert.FromBase64String(authToken));
-                string[] tokens = decodedToken.Split(',', ':');
-                int aftalenummer;
-                string brugernavn = "";
-                string kodeord = "";
-
-                if (tokens.Length == 3)
+                try
                 {
-                    aftalenummer = Convert.ToInt16(tokens[0]);
-                    brugernavn = tokens[1];
-                    kodeord = tokens[2];
+                    string authToken = actionContext.Request.Headers.Authorization.Parameter;
+                    string decodedToken = Encoding.UTF8.GetString(Convert.FromBase64String(authToken));
+                    string[] tokens = decodedToken.Split(',', ':');
+                    int? aftalenummer;
+                    string brugernavn = "";
+                    string kodeord = "";
 
-                    User bruger = new User();
-                    bruger.UserName = aftalenummer + ":" + brugernavn;
+                    if (tokens.Length == 2)
+                    {
+                        MySQL mySql = new MySQL();
+                        brugernavn = tokens[0];
+                        kodeord = tokens[1];
+                        aftalenummer = mySql.HentEconomicAftalenummer(brugernavn, kodeord);
 
-                    byte[] bytes = new byte[16];
-                    BitConverter.GetBytes(aftalenummer).CopyTo(bytes, 0);
-                    bruger.UserId= new Guid(bytes);
+                        if (aftalenummer != null)
+                        {
+                            User bruger = new User();
+                            bruger.UserName = aftalenummer + ":" + brugernavn;
 
-                    HttpContext.Current.User = new GenericPrincipal(new ApiIdentity(bruger), new string[] { });
-                    base.OnActionExecuting(actionContext);
+                            HttpContext.Current.User = new GenericPrincipal(new ApiIdentity(bruger), new string[] { });
+                            base.OnActionExecuting(actionContext);
+                        }
+                        else
+                        {
+                            actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
+                        }
+                    }
+                    else
+                    {
+                        actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
+                    }
                 }
-
-                else
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Fejl ved login: " + e);
                     actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
+                }
             }
-
-            
-            
-
-
         }
     }
 
