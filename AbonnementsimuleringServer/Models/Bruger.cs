@@ -24,5 +24,9 @@ namespace AbonnementsimuleringServer.Models
             Brugernavn = dataSet.Tables["MySqlData"].Rows[0]["brugernavn"].ToString();
             Kodeord = dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString();
         }
+
+        public Bruger()
+        { 
+        }
     }
 }

@@ -12,10 +12,11 @@ using System.Web.Http;
 
 namespace AbonnementsimuleringServer.ApiControllers
 {
-    public class DatapunkterTidAntalController : ApiController
+    public class DatapunkterController : ApiController
     {
-        [BasicAuthentication]
-        public HttpResponseMessage Get()
+        [HttpGet]
+        [ActionName("TidAntal")]
+        public HttpResponseMessage TidAntal()
         {
             List<Datapunkt> datapunkter = new List<Datapunkt>();
 
@@ -40,5 +41,35 @@ namespace AbonnementsimuleringServer.ApiControllers
 
             return Request.CreateResponse(HttpStatusCode.OK, datapunkter); 
         }
+
+        [HttpGet]
+        [ActionName("TidDkk")]
+        public HttpResponseMessage TidDkk()
+        {
+            List<Datapunkt> datapunkter = new List<Datapunkt>();
+
+            try
+            {
+                MySQL mySql = new MySQL(387892);
+                DataSet datapunkterDatasaet = mySql.HentDatapunkterTidDkk();
+
+                foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
+                {
+                    DateTime tid = (DateTime)raekke["tid"];
+                    decimal dkk = (decimal)raekke["sum"];
+                    Datapunkt datapunkt = Datapunkt.DimKeyTidDKK(tid, dkk);
+                    datapunkter.Add(datapunkt);
+                }
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, datapunkter);
+        }
+
+
+        
     }
 }

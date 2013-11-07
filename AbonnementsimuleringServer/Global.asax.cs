@@ -22,11 +22,7 @@ namespace AbonnementsimuleringServer
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            // AUTH
-//            GlobalConfiguration.Configuration.MessageHandlers.Add(new MyBasicAuthenticationHandler());
-            
+            BundleConfig.RegisterBundles(BundleTable.Bundles);         
  
         }
     }
