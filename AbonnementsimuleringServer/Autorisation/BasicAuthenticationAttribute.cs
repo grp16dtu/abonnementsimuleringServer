@@ -1,6 +1,7 @@
 ﻿using AbonnementsimuleringServer.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
@@ -38,12 +39,31 @@ namespace AbonnementsimuleringServer.Autorisation
                         kodeord = tokens[1];
                         aftalenummer = mySql.HentEconomicAftalenummer(brugernavn, kodeord);
 
+                        Debug.WriteLine("Bruger: {0}, Kodeord: {1}",brugernavn, kodeord);
+                        DataSet mysqlData = mySql.HentBruger(brugernavn, kodeord);
+
+
+                        Debug.WriteLine("Test{0} ",mysqlData.Tables[0].Rows[0]["brugerFornavn"]);
+                        
+
+                        Bruger bruger = new Bruger(mysqlData);
+
+                        
+
                         if (aftalenummer != null)
                         {
-                            User bruger = new User();
-                            bruger.UserName = aftalenummer + ":" + brugernavn;
+                            User webApiForespoerger = new User();
+                            webApiForespoerger.UserName = aftalenummer + ":" + brugernavn;
 
-                            HttpContext.Current.User = new GenericPrincipal(new ApiIdentity(bruger), new string[] { });
+                            Debug.WriteLine("Bruger: {0}, Kode: {1}, Aft: {2}",brugernavn,kodeord,aftalenummer);
+
+                            string[] roller;
+                            if (bruger.Ansvarlig)
+                                roller = new string[]{"Ansvarlig, Bruger"};
+                            else
+                                roller = new string[] { "Bruger" };
+
+                            HttpContext.Current.User = new GenericPrincipal(new ApiIdentity(webApiForespoerger), roller);
                             base.OnActionExecuting(actionContext);
                         }
                         else

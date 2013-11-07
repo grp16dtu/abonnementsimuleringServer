@@ -273,16 +273,15 @@ namespace AbonnementsimuleringServer.Models
         public DataSet HentBruger(string brugernavn, string kodeord)
         {
             TilslutMysql();
-            string forespoergsel = "SELECT * FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
+            string forespoergsel = "SELECT * FROM brugere WHERE brugernavn = '" + brugernavn + "'";
             DataSet dataSet = FraDatabase(forespoergsel);
             AfbrydMysql();
 
             if (dataSet != null && dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString() == kodeord)
-            {
                 return dataSet;
-            }
-
-            return null;
+           
+            else
+                return null;
         }
 
         public void OpretBruger(Bruger bruger, int economicAftalenummer)
@@ -312,6 +311,24 @@ namespace AbonnementsimuleringServer.Models
             forespoergsel = forespoergsel + "('" + bruger.Brugernavn + "', '" + bruger.Kodeord + "', '" + bruger.MedarbejderNummer + "', '" + bruger.Fornavn + "', '" + bruger.Efternavn + "', '" + economicAftalenummerId + "', '" + Convert.ToInt32(bruger.Ansvarlig) + "')";
             Debug.WriteLine(forespoergsel);
             TilDatabase(forespoergsel);
+            AfbrydMysql();
+        }
+
+        public void RedigerBruger(Bruger bruger)
+        {
+            TilslutMysql();
+            string mySqlStreng = "UPDATE brugere SET brugernavn = '" + bruger.Brugernavn + "', kodeord = '" + bruger.Kodeord + "', brugerMedarbejdernummer ='" + bruger.MedarbejderNummer + "', brugerFornavn = '" + bruger.Fornavn + "', brugerEfternavn = '" + bruger.Efternavn + "', erAnsvarlig = '" + Convert.ToInt32(bruger.Ansvarlig) + "' WHERE brugernavn = '" + bruger.Brugernavn + "'";
+            Debug.WriteLine(mySqlStreng);
+            TilDatabase(mySqlStreng);
+            AfbrydMysql();
+        }
+
+        public void SletBruger(Bruger bruger)
+        {
+            TilslutMysql();
+            string mySqlStreng = "DELETE FROM brugere WHERE brugernavn = '" + bruger.Brugernavn +"'";
+            Debug.WriteLine(mySqlStreng);
+            TilDatabase(mySqlStreng);
             AfbrydMysql();
         }
     }

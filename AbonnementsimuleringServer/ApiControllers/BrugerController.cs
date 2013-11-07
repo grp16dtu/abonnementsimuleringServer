@@ -3,6 +3,8 @@ using AbonnementsimuleringServer.Helpers;
 using AbonnementsimuleringServer.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,41 +20,84 @@ namespace AbonnementsimuleringServer.ApiControllers
         [ActionName("Hent")]
         public HttpResponseMessage Hent(string brugernavn, string kodeord)
         {
-
-            if (brugernavn == "Anders" && kodeord =="Kode1234")
+            try
             {
-                Bruger bruger = new Bruger();
-                bruger.Fornavn = "Lasse";
-                return Request.CreateResponse(HttpStatusCode.OK, bruger); 
+                MySQL mySql = new MySQL();
+                DataSet brugerdata = mySql.HentBruger(brugernavn, kodeord);
+                Bruger bruger = new Bruger(brugerdata);
+                return Request.CreateResponse(HttpStatusCode.OK, bruger);
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
             }
 
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Bruger ikke fundet");
+            
         }
 
-        [HttpGet]
+        [HttpPost]
         [ActionName("Opret")]
-        public HttpResponseMessage Opret([FromUri]Bruger bruger)
+        public HttpResponseMessage Opret([FromBody]Bruger bruger)
         {
+            if (bruger == null)
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Data forkert");
+
             int economicAftalenummer = Vaerktoejer.FindEconomicAftalenummer(HttpContext.Current.User.Identity.Name);
 
-            MySQL mySql = new MySQL();
-            mySql.OpretBruger(bruger, economicAftalenummer);
+            try
+            {
+                MySQL mySql = new MySQL();
+                mySql.OpretBruger(bruger, economicAftalenummer);
+                return Request.CreateErrorResponse(HttpStatusCode.OK, "Bruger oprettet");
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
+            }
             
-            return Request.CreateErrorResponse(HttpStatusCode.OK, "Oprettet");
+            
         }
 
-        [HttpGet]
+        [HttpPost]
         [ActionName("Rediger")]
-        public HttpResponseMessage Rediger(Bruger bruger)
+        public HttpResponseMessage Rediger([FromBody]Bruger bruger)
         {
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Rediger");
+            Debug.WriteLine("Ansvarlig: {0}",HttpContext.Current.User.IsInRole("Ansvarlig"));
+            if (bruger == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
+
+            try
+            {
+                MySQL mySql = new MySQL();
+                mySql.RedigerBruger(bruger);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
+            }
+
+
         }
 
-        [HttpGet]
+        [HttpPost]
         [ActionName("Slet")]
-        public HttpResponseMessage Slet(Bruger bruger)
+        public HttpResponseMessage Slet([FromBody]Bruger bruger)
         {
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, "slet");
+            if (bruger == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
+
+            try
+            {
+                MySQL mySql = new MySQL();
+                mySql.SletBruger(bruger);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
+            }
         }
 
 
