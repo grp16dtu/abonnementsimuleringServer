@@ -12,7 +12,7 @@ namespace AbonnementsimuleringServer.Controllers
     public class GenererNySimuleringController : ApiController
     {
         // GET api/generernysimulering
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get()
         {
             try
             {

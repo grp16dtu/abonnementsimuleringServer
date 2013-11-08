@@ -1,11 +1,17 @@
 ﻿<div id="body">
 
     <div style="text-align:center;"><h1>Abonnementsimulering</h1></div>
-    <div style="width: 1000px; margin-left: auto; margin-right: auto;">
+    <div style="width: 1200px; margin-left: auto; margin-right: auto;">
         
         <div class="panel panel-default">
 
-            <div class="panel-heading">Dokumentation for WEB API: http://grp16dtu-001-site1.smarterasp.net/API </div>
+            <div class="panel-heading">
+                Dokumentation for WEB API: http://grp16dtu-001-site1.smarterasp.net/API <br />
+                <b>GET</b><br />
+                <ul>
+                    <li>Authorization:Basic RGluTW9yOjEyMzQ=
+                </ul>
+            </div>
             
 
             <table class="table table-striped">
@@ -19,25 +25,25 @@
             <tbody>
                 <tr>
                     <td style="vertical-align: middle;"><button class="btn btn-success">GET</button></td>
-                    <td style="vertical-align: middle;"><a href="../../API/GenererNySimulering/387892">/GenererNySimulering/{EconomicAftalenummer}</a></td>
+                    <td style="vertical-align: middle;">/GenererNySimulering/</a></td>
                     <td style="vertical-align: middle;">Genererer komplet simulering og lægger data i database.</td>
                 </tr>
 
                 <tr>
                     <td style="vertical-align: middle;"><button class="btn btn-success">GET</button></td>
-                    <td style="vertical-align: middle;"><a href="../../API/SletKundeTabeller/387892">/SletKundeTabeller/{EconomicAftalenummer}</a></td>
+                    <td style="vertical-align: middle;">/SletKundeTabeller/</td>
                     <td style="vertical-align: middle;">Sletter alle kunderelaterede tabeller</td>
                 </tr>
 
                 <tr>
                     <td style="vertical-align: middle;"><button class="btn btn-success">GET</button></td>
-                    <td style="vertical-align: middle;"><a href="../../API/DatapunkterTidDkk">/DatapunkterTidDkk</a></td>
+                    <td style="vertical-align: middle;">/Datapunkter/TidDkk/</td>
                     <td style="vertical-align: middle;">Henter datapunkter med dimension: tid og key figure: DKK</td>
                 </tr>
 
                 <tr>
                     <td style="vertical-align: middle;"><button class="btn btn-success">GET</button></td>
-                    <td style="vertical-align: middle;"><a href="../../API/DatapunkterTidAntal">/DatapunkterTidAntal</a></td>
+                    <td style="vertical-align: middle;">/Datapunkter/TidAntal</td>
                     <td style="vertical-align: middle;">Henter datapunkter med dimension: tid og key figure: Antal</td>
                 </tr>
             </tbody>
@@ -45,7 +51,91 @@
             
         </div>
 
+
+
+
+
+
+
+
+
+
+
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <b>POST, PUT</b><br />
+                <ul>
+                    <li>Authorization:Basic RGluTW9yOjEyMzQ=
+                    <li>Header:Content-Type: application/json; charset=utf-8
+                    <li>Data: Indsæt i body. Eks: {"Fornavn":"Hans","Efternavn":"Jensen","MedarbejderNummer":"5","Ansvarlig":"0","Brugernavn":"hans@jensen.dk","Kodeord":"Kode1234"}
+                </ul>
+
+                <b>GET, DELETE</b><br />
+                <ul>
+                    <li>Authorization:Basic RGluTW9yOjEyMzQ=
+                    <li>Data: Indsættes i URI. Eks: /Bruger/Opret/?Fornavn=Hans&Efternavn=Jensen&MedarbejderNummer=5&Ansvarlig=0&Brugernavn=hans@jensen.dk&Kodeord=Kode1234
+                </ul>
+            </div>
+
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 50px">Type</th>
+                        <th>URL</th>
+                        <th style="width: 100px">Basic auth?</th>
+                        <th style="width: 500px;">Beskrivelse</th>
+                        <th style="width: 150px">HTTP status koder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="vertical-align: middle;"><button class="btn btn-primary">POST</button></td>
+                        <td style="vertical-align: middle;">/Bruger/Opret/</td>
+                        <td style="vertical-align: middle; text-align:center;">Ja<br /></td>
+                        <td style="vertical-align: middle;">Opretter ny bruger. <br /></td>
+                        <td style="vertical-align: middle;">200, 400 og 500</td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align: middle;"><button class="btn btn-success">GET</button></td>
+                        <td style="vertical-align: middle;">/Bruger/Hent/</td>
+                        <td style="vertical-align: middle; text-align:center;">Ja<br /></td>
+                        <td style="vertical-align: middle;">Henter bruger ud fra brugernavn og kodeord<br /></td>
+                        <td style="vertical-align: middle;">200 og 500</td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align: middle;"><button class="btn btn-warning">PUT</button></td>
+                        <td style="vertical-align: middle;">/Bruger/Rediger/</td>
+                        <td style="vertical-align: middle; text-align:center;">Ja<br /></td>
+                        <td style="vertical-align: middle;">Overskriver brugerdata<br /></td>
+                        <td style="vertical-align: middle;">-</td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align: middle;"><button class="btn btn-danger">DELETE</button></td>
+                        <td style="vertical-align: middle;">/Bruger/Slet/</td>
+                        <td style="vertical-align: middle; text-align:center;">Ja<br /></td>
+                        <td style="vertical-align: middle;">Sletter bruger helt.<br /></td>
+                        <td style="vertical-align: middle;">-</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
         
     </div>
+
+
+
+
+
+
+
+
+
     
 </div>

@@ -284,6 +284,15 @@ namespace AbonnementsimuleringServer.Models
                 return null;
         }
 
+        public DataSet HentAlleBrugere()
+        {
+            TilslutMysql();
+            string forespoergsel = "SELECT * FROM brugere";
+            DataSet mySqlData = FraDatabase(forespoergsel);
+            AfbrydMysql();
+            return mySqlData;
+        }
+
         public void OpretBruger(Bruger bruger, int economicAftalenummer)
         {
             string forespoergsel;

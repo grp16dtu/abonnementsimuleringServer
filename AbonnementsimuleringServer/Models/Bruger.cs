@@ -28,6 +28,27 @@ namespace AbonnementsimuleringServer.Models
             Kodeord = dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString();
         }
 
+        public static List<Bruger> ListeAfBrugere(DataSet mySqlData)
+        {
+            List<Bruger> brugere = new List<Bruger>();
+            foreach (DataRow brugerData in mySqlData.Tables["MySqlData"].Rows)
+            {
+                Bruger bruger = new Bruger();
+
+                bruger.Fornavn = brugerData["brugerFornavn"].ToString();
+                bruger.Efternavn = brugerData["brugerEfternavn"].ToString();
+
+                if (!Convert.IsDBNull(brugerData["brugerMedarbejdernummer"]))
+                    bruger.MedarbejderNummer = Convert.ToInt32(brugerData["brugerMedarbejdernummer"]);
+
+                bruger.Ansvarlig = (bool)brugerData["erAnsvarlig"];
+                bruger.Brugernavn = brugerData["brugernavn"].ToString();
+                bruger.Kodeord = brugerData["kodeord"].ToString();
+                brugere.Add(bruger);
+            }
+            return brugere;
+        }
+
         public Bruger()
         { 
         }

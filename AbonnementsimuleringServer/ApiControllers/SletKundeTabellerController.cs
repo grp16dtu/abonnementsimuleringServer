@@ -10,9 +10,9 @@ namespace AbonnementsimuleringServer.Controllers
 {
     public class SletKundeTabellerController : ApiController
     {
-        public HttpResponseMessage Get(int id) 
+        public HttpResponseMessage Get() 
         {
-            int economicAftalenummer = id;
+            int economicAftalenummer = 387892;
             try
             {
                 MySQL mySql = new MySQL(economicAftalenummer);

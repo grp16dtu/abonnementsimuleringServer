@@ -29,18 +29,37 @@ namespace AbonnementsimuleringServer.ApiControllers
             }
             catch (Exception exception)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
             }
-
-            
         }
+
+        [HttpGet]
+        [ActionName("HentAlle")]
+        public HttpResponseMessage HentAlle()
+        {
+            List<Bruger> brugere = new List<Bruger>();
+            try
+            {
+                MySQL mySql = new MySQL();
+                DataSet brugerdata = mySql.HentAlleBrugere();
+
+                brugere = Bruger.ListeAfBrugere(brugerdata);
+                return Request.CreateResponse(HttpStatusCode.OK, brugere);
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
+            }
+        }
+
+
 
         [HttpPost]
         [ActionName("Opret")]
         public HttpResponseMessage Opret([FromBody]Bruger bruger)
         {
             if (bruger == null)
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Data forkert");
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Data forkert");
 
             int economicAftalenummer = Vaerktoejer.FindEconomicAftalenummer(HttpContext.Current.User.Identity.Name);
 
@@ -52,13 +71,13 @@ namespace AbonnementsimuleringServer.ApiControllers
             }
             catch (Exception exception)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
             }
             
             
         }
 
-        [HttpPost]
+        [HttpPut]
         [ActionName("Rediger")]
         public HttpResponseMessage Rediger([FromBody]Bruger bruger)
         {
@@ -70,7 +89,7 @@ namespace AbonnementsimuleringServer.ApiControllers
             {
                 MySQL mySql = new MySQL();
                 mySql.RedigerBruger(bruger);
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK,"Bruger redigeret");
             }
             catch (Exception exception)
             {
@@ -80,9 +99,9 @@ namespace AbonnementsimuleringServer.ApiControllers
 
         }
 
-        [HttpPost]
+        [HttpDelete]
         [ActionName("Slet")]
-        public HttpResponseMessage Slet([FromBody]Bruger bruger)
+        public HttpResponseMessage Slet([FromUri]Bruger bruger)
         {
             if (bruger == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
@@ -91,7 +110,7 @@ namespace AbonnementsimuleringServer.ApiControllers
             {
                 MySQL mySql = new MySQL();
                 mySql.SletBruger(bruger);
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK,"Bruger slettet");
             }
             
             catch (Exception exception)
@@ -99,7 +118,5 @@ namespace AbonnementsimuleringServer.ApiControllers
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
             }
         }
-
-
     }
 }
