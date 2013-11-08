@@ -10,18 +10,19 @@ namespace AbonnementsimuleringServer.Controllers
 {
     public class SletKundeTabellerController : ApiController
     {
-        public string Get(int id) 
+        public HttpResponseMessage Get() 
         {
-            int economicAftalenummer = id;
+            int economicAftalenummer = 387892;
             try
             {
                 MySQL mySql = new MySQL(economicAftalenummer);
                 mySql.SletKundeTabeller();
-                return "Tabeller slettet";
+                return Request.CreateResponse(HttpStatusCode.OK, "Tabeller slettet");
             }
-            catch (Exception e)
+
+            catch (Exception exception)
             {
-                return "Fejl: " + e.Message;
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
             }
         }
     }

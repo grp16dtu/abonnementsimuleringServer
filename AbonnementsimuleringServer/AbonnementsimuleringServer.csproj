@@ -149,22 +149,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiControllers\DatapunkterTidAntalController.cs" />
+    <Compile Include="ApiControllers\BrugerController.cs" />
+    <Compile Include="ApiControllers\DatapunkterController.cs" />
     <Compile Include="ApiControllers\HomeController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="ApiControllers\DatapunkterTidDkkController.cs" />
+    <Compile Include="Autorisation\ApiIdentity.cs" />
+    <Compile Include="Autorisation\BasicAuthenticationAttribute.cs" />
     <Compile Include="Controllers\EconomicController.cs" />
     <Compile Include="ApiControllers\GenererNySimuleringController.cs" />
     <Compile Include="ApiControllers\SletKundeTabellerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Vaerktoejer.cs" />
     <Compile Include="Models\Abonnement.cs" />
     <Compile Include="Models\Abonnent.cs" />
     <Compile Include="Models\Afdeling.cs" />
+    <Compile Include="Models\Bruger.cs" />
     <Compile Include="Models\Datapunkt.cs" />
     <Compile Include="Models\Debitor.cs" />
     <Compile Include="Models\EconomicUdtraek.cs" />
@@ -181,7 +185,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AbonnementsimuleringServer.publish.xml" />
     <Content Include="Css\bootstrap.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -602,9 +605,7 @@
     <None Include="Service References\EconomicSOAP\EconomicWebService.wsdl" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>

@@ -30,6 +30,15 @@ namespace AbonnementsimuleringServer.Models
             Initialiser();
         }
 
+        public MySQL()
+        {
+            _mySqlServerUrl = "MYSQL5004.smarterasp.net";
+            _mySqlDatabase = "db_9ac26b_abosim";
+            _mySqlBrugernavn = "9ac26b_abosim";
+            _mySqlKodeord = "Kode1234";
+            Initialiser();
+        }
+
         private void Initialiser()
         {
             InitialiserForbindelse();
@@ -244,6 +253,92 @@ namespace AbonnementsimuleringServer.Models
             mySqlStreng = mySqlStreng.Remove(mySqlStreng.Length - 1, 1);
             mySqlStreng += " ON DUPLICATE KEY UPDATE antal = antal + VALUES(antal), beloeb = beloeb + VALUES(beloeb); COMMIT;";
             return mySqlStreng;
+        }
+
+        public int? HentEconomicAftalenummer(string brugernavn, string kodeord)
+        {
+            TilslutMysql();
+            string forespoergsel = "SELECT kodeord, aftalenummer FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
+            DataSet dataSet = FraDatabase(forespoergsel);
+            AfbrydMysql();
+
+            if (dataSet != null && dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString() == kodeord)
+            {
+                return (int)(dataSet.Tables["MySqlData"].Rows[0]["aftalenummer"]);
+            }
+
+            return null;
+        }
+
+        public DataSet HentBruger(string brugernavn, string kodeord)
+        {
+            TilslutMysql();
+            string forespoergsel = "SELECT * FROM brugere WHERE brugernavn = '" + brugernavn + "'";
+            DataSet dataSet = FraDatabase(forespoergsel);
+            AfbrydMysql();
+
+            if (dataSet != null && dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString() == kodeord)
+                return dataSet;
+           
+            else
+                return null;
+        }
+
+        public DataSet HentAlleBrugere()
+        {
+            TilslutMysql();
+            string forespoergsel = "SELECT * FROM brugere";
+            DataSet mySqlData = FraDatabase(forespoergsel);
+            AfbrydMysql();
+            return mySqlData;
+        }
+
+        public void OpretBruger(Bruger bruger, int economicAftalenummer)
+        {
+            string forespoergsel;
+            int economicAftalenummerId;
+            DataSet dataSet;
+            TilslutMysql();
+
+            // Hent economicAftlenummerId ud fra economicAftlenummer
+            string mySqlFindId = "SELECT economicAftalenummerId FROM economicAftalenumre WHERE aftalenummer = '" + economicAftalenummer + "'";
+            dataSet = FraDatabase(mySqlFindId);
+            if(dataSet != null)
+            {
+                economicAftalenummerId = (int)dataSet.Tables["MySqlData"].Rows[0]["economicAftalenummerId"];
+            }
+            else
+            {
+                forespoergsel = "INSERT INTO economicAftalnumre (aftalenummer) VALUES ('" + economicAftalenummer + "')";
+                TilDatabase(forespoergsel);
+                dataSet = FraDatabase(mySqlFindId);
+                economicAftalenummerId = (int)dataSet.Tables["MySqlData"].Rows[0]["economicAftalenummerId"];
+            }
+
+            //Indsæt bruger
+            forespoergsel = "INSERT INTO brugere (brugernavn, kodeord, brugerMedarbejdernummer, brugerFornavn, brugerEfternavn, economicAftalenummerId, erAnsvarlig) VALUES ";
+            forespoergsel = forespoergsel + "('" + bruger.Brugernavn + "', '" + bruger.Kodeord + "', '" + bruger.MedarbejderNummer + "', '" + bruger.Fornavn + "', '" + bruger.Efternavn + "', '" + economicAftalenummerId + "', '" + Convert.ToInt32(bruger.Ansvarlig) + "')";
+            Debug.WriteLine(forespoergsel);
+            TilDatabase(forespoergsel);
+            AfbrydMysql();
+        }
+
+        public void RedigerBruger(Bruger bruger)
+        {
+            TilslutMysql();
+            string mySqlStreng = "UPDATE brugere SET brugernavn = '" + bruger.Brugernavn + "', kodeord = '" + bruger.Kodeord + "', brugerMedarbejdernummer ='" + bruger.MedarbejderNummer + "', brugerFornavn = '" + bruger.Fornavn + "', brugerEfternavn = '" + bruger.Efternavn + "', erAnsvarlig = '" + Convert.ToInt32(bruger.Ansvarlig) + "' WHERE brugernavn = '" + bruger.Brugernavn + "'";
+            Debug.WriteLine(mySqlStreng);
+            TilDatabase(mySqlStreng);
+            AfbrydMysql();
+        }
+
+        public void SletBruger(Bruger bruger)
+        {
+            TilslutMysql();
+            string mySqlStreng = "DELETE FROM brugere WHERE brugernavn = '" + bruger.Brugernavn +"'";
+            Debug.WriteLine(mySqlStreng);
+            TilDatabase(mySqlStreng);
+            AfbrydMysql();
         }
     }
 }
