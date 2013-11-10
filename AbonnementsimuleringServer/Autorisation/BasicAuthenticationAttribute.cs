@@ -11,16 +11,13 @@ using System.Web.Providers.Entities;
 
 namespace AbonnementsimuleringServer.Autorisation
 {
-    public class BasicAuthenticationAttribute : System.Web.Http.Filters.ActionFilterAttribute
+    public class BasicAuthAttribute : System.Web.Http.Filters.ActionFilterAttribute
     {
         public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
             if (actionContext.Request.Headers.Authorization == null)
-            {
                 actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
-                //throw new Exception();
-            }
-
+            
             else
             {
                 try
@@ -35,42 +32,26 @@ namespace AbonnementsimuleringServer.Autorisation
                     if (tokens.Length == 2)
                     {
                         MySQL mySql = new MySQL();
+
                         brugernavn = tokens[0];
                         kodeord = tokens[1];
                         aftalenummer = mySql.HentEconomicAftalenummer(brugernavn, kodeord);
-
-                        Debug.WriteLine("Bruger: {0}, Kodeord: {1}",brugernavn, kodeord);
-                        DataSet mysqlData = mySql.HentBruger(brugernavn, kodeord);
-
-
-                        Debug.WriteLine("Test{0} ",mysqlData.Tables[0].Rows[0]["brugerFornavn"]);
-                        
-
-                        Bruger bruger = new Bruger(mysqlData);
-
                         
 
                         if (aftalenummer != null)
                         {
-                            User webApiForespoerger = new User();
-                            webApiForespoerger.UserName = aftalenummer + ":" + brugernavn;
-
-                            Debug.WriteLine("Bruger: {0}, Kode: {1}, Aft: {2}",brugernavn,kodeord,aftalenummer);
-
-                            string[] roller;
-                            if (bruger.Ansvarlig)
-                                roller = new string[]{"Ansvarlig, Bruger"};
-                            else
-                                roller = new string[] { "Bruger" };
-
-                            HttpContext.Current.User = new GenericPrincipal(new ApiIdentity(webApiForespoerger), roller);
+                            DataSet mysqlData = mySql.HentBruger(brugernavn, kodeord);
+                            Bruger bruger = new Bruger(mysqlData);
+                            HttpContext.Current.User = new GenericPrincipal(new ApiIdentitet(bruger, (int)aftalenummer), new string[]{});
                             base.OnActionExecuting(actionContext);
                         }
+
                         else
                         {
                             actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
                         }
                     }
+
                     else
                     {
                         actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
@@ -78,7 +59,7 @@ namespace AbonnementsimuleringServer.Autorisation
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine("Fejl ved login: " + e);
+                    Debug.WriteLine("Aut. fejl: " + e.Message);
                     actionContext.Response = new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
                 }
             }

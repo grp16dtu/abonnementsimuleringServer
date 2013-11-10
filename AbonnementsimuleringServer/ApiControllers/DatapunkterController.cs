@@ -16,11 +16,14 @@ namespace AbonnementsimuleringServer.ApiControllers
     {
         [HttpGet]
         [ActionName("TidAntal")]
+        [BasicAuth]
         public HttpResponseMessage TidAntal()
         {
             List<Datapunkt> datapunkter = new List<Datapunkt>();
 
-            Debug.WriteLine("HEJ: " + HttpContext.Current.User.Identity.Name);
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            Debug.WriteLine(identitet.Name);
+           
             try
             {
                 MySQL mySql = new MySQL(387892);
@@ -44,6 +47,7 @@ namespace AbonnementsimuleringServer.ApiControllers
 
         [HttpGet]
         [ActionName("TidDkk")]
+        [BasicAuth]
         public HttpResponseMessage TidDkk()
         {
             List<Datapunkt> datapunkter = new List<Datapunkt>();
@@ -67,9 +71,6 @@ namespace AbonnementsimuleringServer.ApiControllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, datapunkter);
-        }
-
-
-        
+        }  
     }
 }

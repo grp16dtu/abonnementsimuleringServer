@@ -1,4 +1,5 @@
-﻿using AbonnementsimuleringServer.Models;
+﻿using AbonnementsimuleringServer.Autorisation;
+using AbonnementsimuleringServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,9 +10,9 @@ using System.Web.Http;
 
 namespace AbonnementsimuleringServer.Controllers
 {
+    [BasicAuth]
     public class GenererNySimuleringController : ApiController
     {
-        // GET api/generernysimulering
         public HttpResponseMessage Get()
         {
             try

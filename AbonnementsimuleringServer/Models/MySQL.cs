@@ -193,6 +193,22 @@ namespace AbonnementsimuleringServer.Models
             return null;
         }
 
+        private DataRow LinjeFraDatabase(string forespoergsel)
+        {
+            MySqlCommand mySqlKommando = new MySqlCommand(forespoergsel, _mySqlForbindelse);
+            MySqlDataReader mySqlData = mySqlKommando.ExecuteReader();
+
+            if (mySqlData.HasRows)
+            {
+                DataSet datasaet = new DataSet();
+                datasaet.Load(mySqlData, LoadOption.PreserveChanges, "MySqlData");
+                return datasaet.Tables[0].Rows[0];
+            }
+
+            mySqlData.Close();
+            return null;
+        }
+
         private bool TabelEksisterer(string tabelNavn)
         {
             DataSet resultat = FraDatabase("SHOW TABLES LIKE '" + tabelNavn + "'");
@@ -258,13 +274,13 @@ namespace AbonnementsimuleringServer.Models
         public int? HentEconomicAftalenummer(string brugernavn, string kodeord)
         {
             TilslutMysql();
-            string forespoergsel = "SELECT kodeord, aftalenummer FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
+            string forespoergsel = "SELECT kodeord, economicAftalenummer FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
             DataSet dataSet = FraDatabase(forespoergsel);
             AfbrydMysql();
 
             if (dataSet != null && dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString() == kodeord)
             {
-                return (int)(dataSet.Tables["MySqlData"].Rows[0]["aftalenummer"]);
+                return (int)(dataSet.Tables["MySqlData"].Rows[0]["economicAftalenummer"]);
             }
 
             return null;
@@ -301,7 +317,7 @@ namespace AbonnementsimuleringServer.Models
             TilslutMysql();
 
             // Hent economicAftlenummerId ud fra economicAftlenummer
-            string mySqlFindId = "SELECT economicAftalenummerId FROM economicAftalenumre WHERE aftalenummer = '" + economicAftalenummer + "'";
+            string mySqlFindId = "SELECT economicAftalenummerId FROM economicAftalenumre WHERE economicAftalenummer = '" + economicAftalenummer + "'";
             dataSet = FraDatabase(mySqlFindId);
             if(dataSet != null)
             {
@@ -339,6 +355,35 @@ namespace AbonnementsimuleringServer.Models
             Debug.WriteLine(mySqlStreng);
             TilDatabase(mySqlStreng);
             AfbrydMysql();
+        }
+
+        public bool BrugerEksisterer(string brugernavn)
+        {
+            TilslutMysql();
+            DataSet mySqlData = FraDatabase("SELECT * FROM brugere WHERE brugernavn='" + brugernavn + "' LIMIT 1");
+            AfbrydMysql();
+            return mySqlData != null;
+        }
+
+        public bool AftalenummerEksisterer(int aftalenummer)
+        {
+            TilslutMysql();
+            Debug.WriteLine("hej1");
+            DataSet mySqlData = FraDatabase("SELECT * FROM economicaftalenumre WHERE economicAftalenummer='" + aftalenummer + "' LIMIT 1");
+            Debug.WriteLine("hej");
+            AfbrydMysql();
+            return mySqlData != null;
+        }
+
+        public void OpretAftalenummer(int economicaftalenummer, string economicbrugernavn, string economickodeord)
+        {
+            TilslutMysql();
+            string mySqlStreng = "INSERT INTO economicaftalenumre (economicAftalenummerId, economicAftalenummer,economicBrugernavn,economicKodeord) VALUES('0','"+economicaftalenummer+"','"+economicbrugernavn+"','"+economickodeord+"')";
+            Debug.WriteLine(mySqlStreng);
+            TilDatabase(mySqlStreng);
+            //DataRow mySqlRaekke = LinjeFraDatabase("SELECT LAST_INSERT_ID()");
+            AfbrydMysql();
+            //return Convert.ToInt32(mySqlRaekke["economicAftalenummerId"]);
         }
     }
 }
