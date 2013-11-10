@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace AbonnementsimuleringServer.Controllers
@@ -14,7 +15,7 @@ namespace AbonnementsimuleringServer.Controllers
     {
         public HttpResponseMessage Get() 
         {
-            int economicAftalenummer = 387892;
+            int economicAftalenummer = ((ApiIdentitet)HttpContext.Current.User.Identity).EconomicAftalenummer;
             try
             {
                 MySQL mySql = new MySQL(economicAftalenummer);

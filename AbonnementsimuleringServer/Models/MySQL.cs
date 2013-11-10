@@ -11,7 +11,6 @@ namespace AbonnementsimuleringServer.Models
     public class MySQL
     {
         private enum Tabelnavne {Varer, Afdelinger, Debitorer }
-        private List<Kundetabel> _kundetabeller = new List<Kundetabel>();
 
         private MySqlConnection _mySqlForbindelse { get; set; }
         private string _mySqlServerUrl { get; set; }
@@ -42,7 +41,6 @@ namespace AbonnementsimuleringServer.Models
         private void Initialiser()
         {
             InitialiserForbindelse();
-            InitialiserKundetabeller();
         }
 
         private void InitialiserForbindelse()
@@ -50,13 +48,7 @@ namespace AbonnementsimuleringServer.Models
             _mySqlForbindelse = new MySqlConnection("SERVER=" + _mySqlServerUrl + ";" + "DATABASE=" + _mySqlDatabase + ";" + "UID=" + _mySqlBrugernavn + ";" + "PASSWORD=" + _mySqlKodeord + ";");
         }
 
-        private void InitialiserKundetabeller()
-        {
-            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "varer", "CREATE TABLE " + _economicAftalenummer + "varer (varenummer VARCHAR(25), varenavn VARCHAR(300), varekostpris DECIMAL, varesalgspris DECIMAL, varevolume DECIMAL, PRIMARY KEY (varenummer))"));
-            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "debitorer", "CREATE TABLE " + _economicAftalenummer + "debitorer (debitornummer VARCHAR(9), debitornavn VARCHAR(255), debitoradresse VARCHAR(255), debitorbynavn VARCHAR(255), debitorland VARCHAR(255), debitoremail VARCHAR(255), debitorpostnummer VARCHAR(10), PRIMARY KEY (debitornummer))"));
-            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "afdelinger", "CREATE TABLE " + _economicAftalenummer + "afdelinger (afdelingsnummer INT, afdelingsnavn VARCHAR(255), PRIMARY KEY (afdelingsnummer))"));
-            _kundetabeller.Add(new Kundetabel(_economicAftalenummer + "transaktioner", "CREATE TABLE " + _economicAftalenummer + "transaktioner (aarMaaned DATETIME, debitornummer VARCHAR(10), varenummer VARCHAR(26), afdelingsnummer INT, antal DECIMAL, beloeb DECIMAL, PRIMARY KEY (aarMaaned, debitornummer, varenummer, afdelingsnummer))"));
-        }
+
 
         public void IndsaetTransaktioner(List<Transaktion> transaktioner)
         {
@@ -94,27 +86,15 @@ namespace AbonnementsimuleringServer.Models
         public void KlargoerTabeller()
         {
             TilslutMysql();
-            foreach (var tabel in _kundetabeller)
-            {
-                if (TabelEksisterer(tabel.Navn))
-                    ToemTabel(tabel.Navn);
-
-                else
-                    OpretTabel(tabel.Oprettelsesstreng);
-            }
-
-            OpretView();
+            KaldKlargoerTabellerRutine(_economicAftalenummer);
             AfbrydMysql();
         }
+
 
         public void SletKundeTabeller()
         {
             TilslutMysql();
-            foreach (var tabel in _kundetabeller)
-            {
-                SletTabel(tabel.Navn);
-            }
-            SletView();
+            KaldSletTabellerRutine(_economicAftalenummer);
             AfbrydMysql();
         }
 
@@ -143,11 +123,6 @@ namespace AbonnementsimuleringServer.Models
             TilDatabase("DROP TABLE " + tabelnavn);
         }
 
-        private void OpretView()
-        {
-            TilDatabase("CREATE OR REPLACE VIEW " + _economicAftalenummer + "simuleringsdata AS SELECT aarMaaned, antal, beloeb, varekostpris, varesalgspris, varevolume, debitornavn, debitoradresse, debitorbynavn, debitorland, debitoremail, debitorpostnummer, af.afdelingsnavn FROM " + _economicAftalenummer + "transaktioner as tr NATURAL JOIN 387892varer as va NATURAL JOIN " + _economicAftalenummer + "debitorer as de LEFT JOIN " + _economicAftalenummer + "afdelinger af ON tr.afdelingsnummer = af.afdelingsnummer");
-        }
-
         private void SletView()
         {
             TilDatabase("DROP VIEW " + _economicAftalenummer + "simuleringsdata");
@@ -174,6 +149,22 @@ namespace AbonnementsimuleringServer.Models
         private void TilDatabase(string mySqlStreng)
         {
             MySqlCommand mySqlKommando = new MySqlCommand(mySqlStreng, _mySqlForbindelse);
+            mySqlKommando.ExecuteNonQuery();
+        }
+
+        private void KaldKlargoerTabellerRutine(int economicAftalenummer)
+        {
+            MySqlCommand mySqlKommando = new MySqlCommand("KlargoerTabeller", _mySqlForbindelse);
+            mySqlKommando.Parameters.AddWithValue("@economicAftalenummer", economicAftalenummer.ToString());
+            mySqlKommando.CommandType = CommandType.StoredProcedure; 
+            mySqlKommando.ExecuteNonQuery(); 
+        }
+
+        private void KaldSletTabellerRutine(int economicAftalenummer)
+        {
+            MySqlCommand mySqlKommando = new MySqlCommand("SletTabeller", _mySqlForbindelse);
+            mySqlKommando.Parameters.AddWithValue("@economicAftalenummer", economicAftalenummer.ToString());
+            mySqlKommando.CommandType = CommandType.StoredProcedure;
             mySqlKommando.ExecuteNonQuery();
         }
 
@@ -381,9 +372,7 @@ namespace AbonnementsimuleringServer.Models
             string mySqlStreng = "INSERT INTO economicaftalenumre (economicAftalenummerId, economicAftalenummer,economicBrugernavn,economicKodeord) VALUES('0','"+economicaftalenummer+"','"+economicbrugernavn+"','"+economickodeord+"')";
             Debug.WriteLine(mySqlStreng);
             TilDatabase(mySqlStreng);
-            //DataRow mySqlRaekke = LinjeFraDatabase("SELECT LAST_INSERT_ID()");
             AfbrydMysql();
-            //return Convert.ToInt32(mySqlRaekke["economicAftalenummerId"]);
         }
     }
 }
