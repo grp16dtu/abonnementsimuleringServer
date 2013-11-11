@@ -26,6 +26,25 @@ namespace AbonnementsimuleringServer.Controllers
             this._economicSOAPklient = new EconomicWebServiceSoapClient();
         }
 
+        public static bool EconomicKontoErValid(int economicAftalenummer, string economicBrugernavn, string economicKodeord)
+        {
+            EconomicWebServiceSoapClient midlertidigEconomicSOAPklient = new EconomicWebServiceSoapClient();
+            ((BasicHttpBinding)midlertidigEconomicSOAPklient.Endpoint.Binding).AllowCookies = true;
+
+            try
+            {    
+                midlertidigEconomicSOAPklient.Connect(economicAftalenummer, economicBrugernavn, economicKodeord);
+                midlertidigEconomicSOAPklient.Company_Get();
+                midlertidigEconomicSOAPklient.Disconnect();
+                return true;
+            }
+            catch (Exception)
+            {
+                midlertidigEconomicSOAPklient.Disconnect();
+                return false;
+            }
+        }
+
         public List<Transaktion> GenererNySimulering(int antalSimuleringsmaaneder, int brugerIndex)
         {
             List<Transaktion> transaktioner = new List<Transaktion>();
