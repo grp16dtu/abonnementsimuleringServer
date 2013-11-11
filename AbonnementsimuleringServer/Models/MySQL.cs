@@ -453,5 +453,14 @@ namespace AbonnementsimuleringServer.Models
             AfbrydMysql();
             return mySqlData;
         }
+
+        public DataSet HentDatapunktsOverblikspunkter()
+        {
+            TilslutMysql();
+            string mySqlStreng = "SELECT * FROM " + _economicAftalenummer + "simuleringsoversigt ORDER BY tidsstempel DESC";
+            DataSet mySqlData = FraDatabase(mySqlStreng);
+            AfbrydMysql();
+            return mySqlData;
+        }
     }
 }

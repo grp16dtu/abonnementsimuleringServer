@@ -43,5 +43,27 @@ namespace AbonnementsimuleringServer.ApiControllers
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
             }
         }
+
+        [HttpGet]
+        [ActionName("HentOverblik")]
+        [BasicAuth]
+        public HttpResponseMessage HentOverblik()
+        {
+            try
+            {
+                ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
+                DataSet mySqlData = mySql.HentDatapunktsOverblikspunkter();
+                List<Datapunktsgruppering> datapunktsoverblik = Datapunktsgruppering.HentListe(mySqlData);
+
+                return Request.CreateResponse(HttpStatusCode.OK, datapunktsoverblik);
+            }
+            catch (Exception exception)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
+            }
+        }
+
+
     }
 }
