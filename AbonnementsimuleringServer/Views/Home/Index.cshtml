@@ -121,6 +121,27 @@
                         <td style="vertical-align: middle;">Sletter bruger helt.<br /></td>
                         <td style="vertical-align: middle;">-</td>
                     </tr>
+
+                    <tr>
+                        <td style="vertical-align: middle;"><button class="btn btn-primary">POST</button></td>
+                        <td style="vertical-align: middle;">/Konto/Opret/</td>
+                        <td style="vertical-align: middle; text-align:center;">Ja<br /></td>
+                        <td style="vertical-align: middle;">
+                            Tjekker om aftalenummer og brugernavn til ansvarlig er oprettet. Hvis ikke oprettes begge.<br />
+                            <br />
+                            public class Konto<br />
+                            {<br />
+                            public int EconomicAftalenummer { get; set; }<br />
+                            public string EconomicBrugernavn { get; set; }<br />
+                            public string EconomicKodeord { get; set; }<br />
+                            public Bruger AbosimBruger { get; set; }<br />
+                            <br />
+                            <br />
+                            public Konto()<br />{}<br />
+                            } 
+                        </td>
+                        <td style="vertical-align: middle;">-</td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -137,5 +158,4 @@
 
 
 
-    
-</div>
+                </div>

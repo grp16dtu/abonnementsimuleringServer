@@ -16,6 +16,5 @@ namespace AbonnementsimuleringServer.Models
         public Konto()
         {
         }
-    }
-    
+    }  
 }

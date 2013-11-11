@@ -187,9 +187,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Css\bootstrap.css" />
+    <Content Include="Include\Css\bootstrap.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Include\Javascript\jquery.js" />
     <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountData.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
