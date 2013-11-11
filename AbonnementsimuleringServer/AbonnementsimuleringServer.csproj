@@ -171,6 +171,7 @@
     <Compile Include="Models\Afdeling.cs" />
     <Compile Include="Models\Bruger.cs" />
     <Compile Include="Models\Datapunkt.cs" />
+    <Compile Include="Models\DatapunktLister.cs" />
     <Compile Include="Models\Debitor.cs" />
     <Compile Include="Models\Konto.cs" />
     <Compile Include="Models\EconomicUdtraek.cs" />

@@ -65,18 +65,66 @@ namespace AbonnementsimuleringServer.Models
             AfbrydMysql();
         }
 
-        public DataSet HentDatapunkterTidDkk()
+        public DataSet HentDatapunkterTidAntal()
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as sum, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY aarMaaned");
+            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY tid");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterTidAntal()
+        public DataSet HentDatapunkterTidDkk()
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY aarMaaned");
+            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY tid");
+            AfbrydMysql();
+            return datasaet;
+        }
+
+        public DataSet HentDatapunkterAfdelingAntal()
+        {
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, afdelingsnavn as afdeling FROM " + _economicAftalenummer + "simuleringsdata GROUP BY afdeling ORDER BY antal DESC");
+            AfbrydMysql();
+            return datasaet;
+        }
+
+        public DataSet HentDatapunkterAfdelingDkk()
+        {
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, afdelingsnavn as afdeling FROM " + _economicAftalenummer + "simuleringsdata GROUP BY afdeling ORDER BY dkk DESC");
+            AfbrydMysql();
+            return datasaet;
+        }
+
+        public DataSet HentDatapunkterDebitorAntal()
+        {
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, debitornavn as debitor FROM " + _economicAftalenummer + "simuleringsdata GROUP BY debitor ORDER BY antal DESC");
+            AfbrydMysql();
+            return datasaet;
+        }
+
+        public DataSet HentDatapunkterDebitorDkk()
+        {
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, debitornavn as debitor FROM " + _economicAftalenummer + "simuleringsdata GROUP BY debitor ORDER BY dkk DESC");
+            AfbrydMysql();
+            return datasaet;
+        }
+
+        public DataSet HentDatapunkterVareAntal()
+        {
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, varenavn as vare FROM " + _economicAftalenummer + "simuleringsdata GROUP BY vare ORDER BY antal DESC");
+            AfbrydMysql();
+            return datasaet;
+        }
+
+        public DataSet HentDatapunkterVareDkk()
+        {
+            TilslutMysql();
+            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, varenavn as vare FROM " + _economicAftalenummer + "simuleringsdata GROUP BY vare ORDER BY dkk DESC");
             AfbrydMysql();
             return datasaet;
         }

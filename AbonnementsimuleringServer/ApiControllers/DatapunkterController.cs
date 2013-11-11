@@ -15,64 +15,33 @@ namespace AbonnementsimuleringServer.ApiControllers
     public class DatapunkterController : ApiController
     {
         [HttpGet]
-        [ActionName("TidAntal")]
+        [ActionName("HentAlle")]
         [BasicAuth]
-        public HttpResponseMessage TidAntal()
-        {
-            List<Datapunkt> datapunkter = new List<Datapunkt>();
-
-            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
-            Debug.WriteLine(identitet.Name);
-           
+        public HttpResponseMessage HentAlle()
+        {   
             try
             {
-                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
-                DataSet datapunkterDatasaet = mySql.HentDatapunkterTidAntal();
+                DatapunktLister datapunktListe = new DatapunktLister();
 
-                foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
-                {
-                    DateTime tid = (DateTime)raekke["tid"];
-                    decimal antal = (decimal)raekke["antal"];
-                    Datapunkt datapunkt = Datapunkt.DimKeyTidAntal(tid, antal);
-                    datapunkter.Add(datapunkt);
-                }
+                ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
+
+                datapunktListe.TidAntal = Datapunkt.OpretListe(mySql.HentDatapunkterTidAntal());
+                datapunktListe.TidDKK = Datapunkt.OpretListe(mySql.HentDatapunkterTidDkk());
+                datapunktListe.VareAntal = Datapunkt.OpretListe(mySql.HentDatapunkterVareAntal());
+                datapunktListe.VareDKK = Datapunkt.OpretListe(mySql.HentDatapunkterTidDkk());
+                datapunktListe.AfdelingAntal = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingAntal());
+                datapunktListe.AfdelingDKK = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingDkk());
+                datapunktListe.DebitorAntal = Datapunkt.OpretListe(mySql.HentDatapunkterDebitorAntal());
+                datapunktListe.DebitorDKK = Datapunkt.OpretListe(mySql.HentDatapunkterDebitorDkk());
+
+                return Request.CreateResponse(HttpStatusCode.OK, datapunktListe);
             }
             catch (Exception exception)
             {
+                Debug.WriteLine("Fejl: " + exception);
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
             }
-
-            return Request.CreateResponse(HttpStatusCode.OK, datapunkter); 
         }
-
-        [HttpGet]
-        [ActionName("TidDkk")]
-        [BasicAuth]
-        public HttpResponseMessage TidDkk()
-        {
-            List<Datapunkt> datapunkter = new List<Datapunkt>();
-
-            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
-
-            try
-            {
-                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
-                DataSet datapunkterDatasaet = mySql.HentDatapunkterTidDkk();
-
-                foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
-                {
-                    DateTime tid = (DateTime)raekke["tid"];
-                    decimal dkk = (decimal)raekke["sum"];
-                    Datapunkt datapunkt = Datapunkt.DimKeyTidDKK(tid, dkk);
-                    datapunkter.Add(datapunkt);
-                }
-            }
-            catch (Exception exception)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK, datapunkter);
-        }  
     }
 }

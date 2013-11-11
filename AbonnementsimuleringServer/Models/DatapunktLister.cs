@@ -18,14 +18,6 @@ namespace AbonnementsimuleringServer.Models
 
         public DatapunktLister()
         {
-            TidAntal = new List<Datapunkt>();
-            TidDKK = new List<Datapunkt>();
-            VareAntal = new List<Datapunkt>();
-            VareDKK = new List<Datapunkt>();
-            AfdelingAntal = new List<Datapunkt>();
-            AfdelingDKK = new List<Datapunkt>();
-            DebitorAntal = new List<Datapunkt>();
-            DebitorDKK = new List<Datapunkt>();
         }
     }
 }
