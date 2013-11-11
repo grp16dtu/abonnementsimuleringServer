@@ -44,6 +44,37 @@ namespace AbonnementsimuleringServer.ApiControllers
             }
         }
 
+
+        [HttpGet]
+        [ActionName("Hent")]
+        [BasicAuth]
+        public HttpResponseMessage Hent(int id)
+        {
+            try
+            {
+                DatapunktLister datapunktListe = new DatapunktLister();
+
+                ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
+
+                datapunktListe.TidAntal = Datapunkt.OpretListe(mySql.HentDatapunkterTidAntal());
+                datapunktListe.TidDKK = Datapunkt.OpretListe(mySql.HentDatapunkterTidDkk());
+                datapunktListe.VareAntal = Datapunkt.OpretListe(mySql.HentDatapunkterVareAntal());
+                datapunktListe.VareDKK = Datapunkt.OpretListe(mySql.HentDatapunkterVareDkk());
+                datapunktListe.AfdelingAntal = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingAntal());
+                datapunktListe.AfdelingDKK = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingDkk());
+                datapunktListe.DebitorAntal = Datapunkt.OpretListe(mySql.HentDatapunkterDebitorAntal());
+                datapunktListe.DebitorDKK = Datapunkt.OpretListe(mySql.HentDatapunkterDebitorDkk());
+
+                return Request.CreateResponse(HttpStatusCode.OK, datapunktListe);
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine("Fejl: " + exception);
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, exception.Message);
+            }
+        }
+
         [HttpGet]
         [ActionName("HentOverblik")]
         [BasicAuth]
