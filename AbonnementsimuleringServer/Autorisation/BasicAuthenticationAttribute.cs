@@ -24,8 +24,7 @@ namespace AbonnementsimuleringServer.Autorisation
                 {
                     string authToken = actionContext.Request.Headers.Authorization.Parameter;
                     string decodedToken = Encoding.UTF8.GetString(Convert.FromBase64String(authToken));
-                    string[] tokens = decodedToken.Split(',', ':');
-                    int? aftalenummer;
+                    string[] tokens = decodedToken.Split(':');
                     string brugernavn = "";
                     string kodeord = "";
 
@@ -35,14 +34,15 @@ namespace AbonnementsimuleringServer.Autorisation
 
                         brugernavn = tokens[0];
                         kodeord = tokens[1];
-                        aftalenummer = mySql.HentEconomicAftalenummer(brugernavn, kodeord);
-                        
 
-                        if (aftalenummer != null)
+                        DataSet mySqlBrugerData = mySql.HentBruger(brugernavn, kodeord);
+                        DataSet mySqlEconomicData = mySql.HentEconomicOplysninger(brugernavn, kodeord);
+
+                        if (mySqlBrugerData != null && mySqlEconomicData != null)
                         {
-                            DataSet mysqlData = mySql.HentBruger(brugernavn, kodeord);
-                            Bruger bruger = new Bruger(mysqlData);
-                            HttpContext.Current.User = new GenericPrincipal(new ApiIdentitet(bruger, (int)aftalenummer), new string[]{});
+                            Bruger bruger = new Bruger(mySqlBrugerData);
+                            Konto konto = new Konto(mySqlEconomicData, bruger);
+                            HttpContext.Current.User = new GenericPrincipal(new ApiIdentitet(konto), new string[] { });
                             base.OnActionExecuting(actionContext);
                         }
 

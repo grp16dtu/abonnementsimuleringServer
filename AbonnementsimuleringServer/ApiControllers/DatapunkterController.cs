@@ -26,7 +26,7 @@ namespace AbonnementsimuleringServer.ApiControllers
            
             try
             {
-                MySQL mySql = new MySQL(387892);
+                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
                 DataSet datapunkterDatasaet = mySql.HentDatapunkterTidAntal();
 
                 foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)
@@ -52,9 +52,11 @@ namespace AbonnementsimuleringServer.ApiControllers
         {
             List<Datapunkt> datapunkter = new List<Datapunkt>();
 
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+
             try
             {
-                MySQL mySql = new MySQL(387892);
+                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
                 DataSet datapunkterDatasaet = mySql.HentDatapunkterTidDkk();
 
                 foreach (DataRow raekke in datapunkterDatasaet.Tables[0].Rows)

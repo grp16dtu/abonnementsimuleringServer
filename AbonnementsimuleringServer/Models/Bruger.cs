@@ -15,6 +15,10 @@ namespace AbonnementsimuleringServer.Models
         public string Brugernavn { get; set; }
         public string Kodeord { get; set; }
 
+        public Bruger()
+        {
+        }
+        
         public Bruger(DataSet dataSet)
         {
             Fornavn = dataSet.Tables["MySqlData"].Rows[0]["brugerFornavn"].ToString();
@@ -47,10 +51,6 @@ namespace AbonnementsimuleringServer.Models
                 brugere.Add(bruger);
             }
             return brugere;
-        }
-
-        public Bruger()
-        { 
         }
     }
 }

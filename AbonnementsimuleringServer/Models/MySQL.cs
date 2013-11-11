@@ -10,7 +10,7 @@ namespace AbonnementsimuleringServer.Models
 {
     public class MySQL
     {
-        private enum Tabelnavne {Varer, Afdelinger, Debitorer }
+        private enum Tabelnavne {Varer, Afdelinger, Debitorer}
 
         private MySqlConnection _mySqlForbindelse { get; set; }
         private string _mySqlServerUrl { get; set; }
@@ -47,8 +47,6 @@ namespace AbonnementsimuleringServer.Models
         {
             _mySqlForbindelse = new MySqlConnection("SERVER=" + _mySqlServerUrl + ";" + "DATABASE=" + _mySqlDatabase + ";" + "UID=" + _mySqlBrugernavn + ";" + "PASSWORD=" + _mySqlKodeord + ";");
         }
-
-
 
         public void IndsaetTransaktioner(List<Transaktion> transaktioner)
         {
@@ -89,7 +87,6 @@ namespace AbonnementsimuleringServer.Models
             KaldKlargoerTabellerRutine(_economicAftalenummer);
             AfbrydMysql();
         }
-
 
         public void SletKundeTabeller()
         {
@@ -156,6 +153,8 @@ namespace AbonnementsimuleringServer.Models
         {
             MySqlCommand mySqlKommando = new MySqlCommand("KlargoerTabeller", _mySqlForbindelse);
             mySqlKommando.Parameters.AddWithValue("@economicAftalenummer", economicAftalenummer.ToString());
+            mySqlKommando.Parameters.AddWithValue("@tidsstempel", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            Debug.WriteLine(DateTime.Now.ToString());
             mySqlKommando.CommandType = CommandType.StoredProcedure; 
             mySqlKommando.ExecuteNonQuery(); 
         }
@@ -262,16 +261,16 @@ namespace AbonnementsimuleringServer.Models
             return mySqlStreng;
         }
 
-        public int? HentEconomicAftalenummer(string brugernavn, string kodeord)
+        public DataSet HentEconomicOplysninger(string brugernavn, string kodeord)
         {
             TilslutMysql();
-            string forespoergsel = "SELECT kodeord, economicAftalenummer FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
+            string forespoergsel = "SELECT kodeord, economicAftalenummer, economicBrugernavn, economicKodeord FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
             DataSet dataSet = FraDatabase(forespoergsel);
             AfbrydMysql();
 
             if (dataSet != null && dataSet.Tables["MySqlData"].Rows[0]["kodeord"].ToString() == kodeord)
             {
-                return (int)(dataSet.Tables["MySqlData"].Rows[0]["economicAftalenummer"]);
+                return dataSet;
             }
 
             return null;

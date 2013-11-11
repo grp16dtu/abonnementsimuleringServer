@@ -12,24 +12,28 @@ namespace AbonnementsimuleringServer.Autorisation
     {
         public Bruger Bruger { get; private set; }
         public int EconomicAftalenummer { get; set; }
+        public string EconomicBrugernavn { get; set; }
+        public string EconomicKodeord { get; set; }
 
-        public ApiIdentitet(Bruger bruger, int economicAftalenummer)
+        public ApiIdentitet(Konto konto)
         {
-            if (bruger == null)
+            if (konto == null)
                 throw new ArgumentNullException("user");
 
-            this.Bruger = bruger;
-            EconomicAftalenummer = economicAftalenummer;
+            Bruger = konto.AbosimBruger;
+            EconomicAftalenummer = konto.EconomicAftalenummer;
+            EconomicBrugernavn = konto.EconomicBrugernavn;
+            EconomicKodeord = konto.EconomicKodeord;
         }
 
         public string Name
         {
-            get { return this.Bruger.Brugernavn; }
+            get { return Bruger.Brugernavn; }
         }
 
         public string Password
         {
-            get { return this.Bruger.Kodeord; }
+            get { return Bruger.Kodeord; }
         }
 
   

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 
@@ -15,6 +16,15 @@ namespace AbonnementsimuleringServer.Models
         
         public Konto()
         {
+        }
+
+        public Konto(DataSet dataSet, Bruger bruger)
+        {
+            AbosimBruger = bruger;
+
+            EconomicAftalenummer = (int)dataSet.Tables["MySqlData"].Rows[0]["economicAftalenummer"];
+            EconomicBrugernavn = dataSet.Tables["MySqlData"].Rows[0]["economicBrugernavn"].ToString();
+            EconomicKodeord = dataSet.Tables["MySqlData"].Rows[0]["economicKodeord"].ToString();
         }
     }  
 }
