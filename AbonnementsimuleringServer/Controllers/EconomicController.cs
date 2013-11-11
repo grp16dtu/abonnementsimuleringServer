@@ -54,11 +54,15 @@ namespace AbonnementsimuleringServer.Controllers
                 EconomicUdtraek economicUdtraek = HentAbonnementsrelateretData();
                 List<Abonnement> abonnementer = ForbindData(economicUdtraek);
                 transaktioner = GenererTransaktioner(abonnementer, antalSimuleringsmaaneder, brugerIndex);
+                string tidsstempel = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
                 MySQL mySql = new MySQL(_economicAftalenummer);
-                mySql.KlargoerTabeller();
+                mySql.KlargoerTabeller(tidsstempel);
                 mySql.IndsaetTransaktioner(transaktioner);
                 mySql.IndsaetRelationeltData(economicUdtraek);
+
+
+                GenererDatapunkter(mySql, tidsstempel);
             }
             catch (Exception e)
             {
@@ -385,6 +389,38 @@ namespace AbonnementsimuleringServer.Controllers
         private DateTime SaetTidligereFoerste(DateTime dato)
         {
             return new DateTime(dato.Year, dato.Month, 1);
+        }
+
+        private void GenererDatapunkter(MySQL mySql, string tidsstempel)
+        {
+            int id = (int)mySql.HentSimuleringsId(tidsstempel).Tables[0].Rows[0]["simuleringsid"];
+
+            List<Datapunkt> datapunkter;
+            string tabelId = _economicAftalenummer + "_" + id + "_";
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterTidAntal());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "tidantal");
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterTidDkk());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "tiddkk");
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterVareAntal());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "vareantal");
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterVareDkk());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "varedkk");
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingAntal());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "afdelingantal");
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingDkk());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "afdelingdkk");
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterDebitorAntal());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "debitorantal");
+
+            datapunkter = Datapunkt.OpretListe(mySql.HentDatapunkterDebitorDkk());
+            mySql.IndsaetDatapunkter(datapunkter, tabelId + "debitordkk");
         }
     }
 }

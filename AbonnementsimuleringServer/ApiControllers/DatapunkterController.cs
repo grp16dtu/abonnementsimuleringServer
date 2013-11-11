@@ -29,7 +29,7 @@ namespace AbonnementsimuleringServer.ApiControllers
                 datapunktListe.TidAntal = Datapunkt.OpretListe(mySql.HentDatapunkterTidAntal());
                 datapunktListe.TidDKK = Datapunkt.OpretListe(mySql.HentDatapunkterTidDkk());
                 datapunktListe.VareAntal = Datapunkt.OpretListe(mySql.HentDatapunkterVareAntal());
-                datapunktListe.VareDKK = Datapunkt.OpretListe(mySql.HentDatapunkterTidDkk());
+                datapunktListe.VareDKK = Datapunkt.OpretListe(mySql.HentDatapunkterVareDkk());
                 datapunktListe.AfdelingAntal = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingAntal());
                 datapunktListe.AfdelingDKK = Datapunkt.OpretListe(mySql.HentDatapunkterAfdelingDkk());
                 datapunktListe.DebitorAntal = Datapunkt.OpretListe(mySql.HentDatapunkterDebitorAntal());

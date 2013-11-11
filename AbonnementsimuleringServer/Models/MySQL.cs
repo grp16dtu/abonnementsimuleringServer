@@ -129,10 +129,10 @@ namespace AbonnementsimuleringServer.Models
             return datasaet;
         }
 
-        public void KlargoerTabeller()
+        public void KlargoerTabeller(string tidsstempel)
         {
             TilslutMysql();
-            KaldKlargoerTabellerRutine(_economicAftalenummer);
+            KaldKlargoerTabellerRutine(_economicAftalenummer, tidsstempel);
             AfbrydMysql();
         }
 
@@ -197,11 +197,11 @@ namespace AbonnementsimuleringServer.Models
             mySqlKommando.ExecuteNonQuery();
         }
 
-        private void KaldKlargoerTabellerRutine(int economicAftalenummer)
+        private void KaldKlargoerTabellerRutine(int economicAftalenummer, string tidsstempel)
         {
             MySqlCommand mySqlKommando = new MySqlCommand("KlargoerTabeller", _mySqlForbindelse);
             mySqlKommando.Parameters.AddWithValue("@economicAftalenummer", economicAftalenummer.ToString());
-            mySqlKommando.Parameters.AddWithValue("@tidsstempel", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            mySqlKommando.Parameters.AddWithValue("@tidsstempel", tidsstempel);
             Debug.WriteLine(DateTime.Now.ToString());
             mySqlKommando.CommandType = CommandType.StoredProcedure; 
             mySqlKommando.ExecuteNonQuery(); 
@@ -420,6 +420,38 @@ namespace AbonnementsimuleringServer.Models
             Debug.WriteLine(mySqlStreng);
             TilDatabase(mySqlStreng);
             AfbrydMysql();
+        }
+
+        public void IndsaetDatapunkter(List<Datapunkt> datapunkter, string tabelnavn)
+        {
+            TilslutMysql();
+            string mySqlStreng = "INSERT INTO " + tabelnavn + " (antal, dkk, tid, varenavn, debitornavn, afdelingsnavn) VALUES ";
+
+            foreach (Datapunkt datapunkt in datapunkter)
+            {
+                string tid = "";
+                if (datapunkt.Tid != null)
+                {
+                    DateTime temp = (DateTime)datapunkt.Tid;
+                    tid = temp.ToString("yyyy-MM-dd HH:mm:ss");
+                }
+
+                mySqlStreng = mySqlStreng + "('" + datapunkt.Antal + "', '" + datapunkt.DKK + "', '" + tid + "', '" + datapunkt.Varenavn + "', '" + datapunkt.Debitornavn + "', '" + datapunkt.Afdelingsnavn + "'),";
+            }
+
+            mySqlStreng = mySqlStreng.Remove(mySqlStreng.Length - 1, 1);
+
+            TilDatabase(mySqlStreng);
+            AfbrydMysql();
+        }
+
+        public DataSet HentSimuleringsId(string tidsstempel)
+        {
+            TilslutMysql();
+            string mySqlStreng = "SELECT simuleringsid FROM " + _economicAftalenummer + "simuleringsoversigt WHERE tidsstempel = '" + tidsstempel + "'";
+            DataSet mySqlData = FraDatabase(mySqlStreng);
+            AfbrydMysql();
+            return mySqlData;
         }
     }
 }
