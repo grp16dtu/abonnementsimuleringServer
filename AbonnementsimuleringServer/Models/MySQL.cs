@@ -65,66 +65,66 @@ namespace AbonnementsimuleringServer.Models
             AfbrydMysql();
         }
 
-        public DataSet HentDatapunkterTidAntal()
+        public DataSet HentDatapunkterTidAntal(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY tid");
+            DataSet datasaet = FraDatabase("SELECT * FROM " +economicAftalenummer+"_" +id+"_tidantal");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterTidDkk()
+        public DataSet HentDatapunkterTidDkk(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, aarMaaned as tid FROM " + _economicAftalenummer + "simuleringsdata GROUP BY tid");
+            DataSet datasaet = FraDatabase("SELECT * FROM " + economicAftalenummer + "_" + id + "_tiddkk");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterAfdelingAntal()
+        public DataSet HentDatapunkterAfdelingAntal(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, afdelingsnavn as afdeling FROM " + _economicAftalenummer + "simuleringsdata GROUP BY afdeling ORDER BY antal DESC");
+            DataSet datasaet = FraDatabase("SELECT * FROM " + economicAftalenummer + "_" + id + "_afdelingantal");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterAfdelingDkk()
+        public DataSet HentDatapunkterAfdelingDkk(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, afdelingsnavn as afdeling FROM " + _economicAftalenummer + "simuleringsdata GROUP BY afdeling ORDER BY dkk DESC");
+            DataSet datasaet = FraDatabase("SELECT * FROM " + economicAftalenummer + "_" + id + "_afdelingdkk");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterDebitorAntal()
+        public DataSet HentDatapunkterDebitorAntal(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, debitornavn as debitor FROM " + _economicAftalenummer + "simuleringsdata GROUP BY debitor ORDER BY antal DESC");
+            DataSet datasaet = FraDatabase("SELECT * FROM " + economicAftalenummer + "_" + id + "_debitorantal");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterDebitorDkk()
+        public DataSet HentDatapunkterDebitorDkk(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, debitornavn as debitor FROM " + _economicAftalenummer + "simuleringsdata GROUP BY debitor ORDER BY dkk DESC");
+            DataSet datasaet = FraDatabase("SELECT * FROM " + economicAftalenummer + "_" + id + "_debitordkk");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterVareAntal()
+        public DataSet HentDatapunkterVareAntal(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(antal) as antal, varenavn as vare FROM " + _economicAftalenummer + "simuleringsdata GROUP BY vare ORDER BY antal DESC");
+            DataSet datasaet = FraDatabase("SELECT * FROM " + economicAftalenummer + "_" + id + "_vareantal");
             AfbrydMysql();
             return datasaet;
         }
 
-        public DataSet HentDatapunkterVareDkk()
+        public DataSet HentDatapunkterVareDkk(int economicAftalenummer, int id)
         {
             TilslutMysql();
-            DataSet datasaet = FraDatabase("SELECT SUM(beloeb) as dkk, varenavn as vare FROM " + _economicAftalenummer + "simuleringsdata GROUP BY vare ORDER BY dkk DESC");
+            DataSet datasaet = FraDatabase("SELECT * FROM " + economicAftalenummer + "_" + id + "_varedkk");
             AfbrydMysql();
             return datasaet;
         }
@@ -210,6 +210,14 @@ namespace AbonnementsimuleringServer.Models
         private void KaldSletTabellerRutine(int economicAftalenummer)
         {
             MySqlCommand mySqlKommando = new MySqlCommand("SletTabeller", _mySqlForbindelse);
+            mySqlKommando.Parameters.AddWithValue("@economicAftalenummer", economicAftalenummer.ToString());
+            mySqlKommando.CommandType = CommandType.StoredProcedure;
+            mySqlKommando.ExecuteNonQuery();
+        }
+
+        private void KaldOpretDatapunktslisterRutine(int economicAftalenummer)
+        {
+            MySqlCommand mySqlKommando = new MySqlCommand("OpretDatapunktslister", _mySqlForbindelse);
             mySqlKommando.Parameters.AddWithValue("@economicAftalenummer", economicAftalenummer.ToString());
             mySqlKommando.CommandType = CommandType.StoredProcedure;
             mySqlKommando.ExecuteNonQuery();
@@ -454,13 +462,20 @@ namespace AbonnementsimuleringServer.Models
             return mySqlData;
         }
 
-        public DataSet HentDatapunktsOverblikspunkter()
+        public DataSet HentDatapunktslisterOversigt()
         {
             TilslutMysql();
             string mySqlStreng = "SELECT * FROM " + _economicAftalenummer + "simuleringsoversigt ORDER BY tidsstempel DESC";
             DataSet mySqlData = FraDatabase(mySqlStreng);
             AfbrydMysql();
             return mySqlData;
+        }
+
+        internal void OpretDatapunktslister()
+        {
+            TilslutMysql();
+            KaldOpretDatapunktslisterRutine(_economicAftalenummer);
+            AfbrydMysql();
         }
     }
 }

@@ -20,8 +20,13 @@ namespace AbonnementsimuleringServer.Controllers
             {
                 ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
                 EconomicController economic = new EconomicController(identitet.EconomicAftalenummer, identitet.EconomicBrugernavn, identitet.EconomicKodeord);
-                List<Transaktion> transaktioner = economic.GenererNySimulering(12, 1);
-                return Request.CreateResponse(HttpStatusCode.OK, transaktioner);
+                bool success = economic.GenererNySimulering(12, 1);
+
+                if (success)
+                    return Request.CreateResponse(HttpStatusCode.OK, "Simulering genereret");
+
+                else
+                    return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Fejl ved generering af simulering");
             }
 
             catch (Exception exception)
