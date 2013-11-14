@@ -160,7 +160,7 @@
     <Compile Include="Autorisation\ApiIdentity.cs" />
     <Compile Include="Autorisation\BasicAuthenticationAttribute.cs" />
     <Compile Include="Controllers\EconomicController.cs" />
-    <Compile Include="ApiControllers\GenererNySimuleringController.cs" />
+    <Compile Include="ApiControllers\SimuleringController.cs" />
     <Compile Include="ApiControllers\SletKundeTabellerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

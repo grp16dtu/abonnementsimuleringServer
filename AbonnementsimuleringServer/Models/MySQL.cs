@@ -394,10 +394,10 @@ namespace AbonnementsimuleringServer.Models
             AfbrydMysql();
         }
 
-        public void SletBruger(Bruger bruger)
+        public void SletBruger(string brugernavn)
         {
             TilslutMysql();
-            string mySqlStreng = "DELETE FROM brugere WHERE brugernavn = '" + bruger.Brugernavn +"'";
+            string mySqlStreng = "DELETE FROM brugere WHERE brugernavn = '" + brugernavn +"'";
             Debug.WriteLine(mySqlStreng);
             TilDatabase(mySqlStreng);
             AfbrydMysql();

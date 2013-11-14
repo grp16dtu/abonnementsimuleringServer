@@ -109,22 +109,20 @@ namespace AbonnementsimuleringServer.ApiControllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
             }
-
-
         }
 
         [HttpDelete]
         [ActionName("Slet")]
         [BasicAuth]
-        public HttpResponseMessage Slet([FromUri]Bruger bruger)
+        public HttpResponseMessage Slet(string brugernavn)
         {
-            if (bruger == null)
+            if (brugernavn == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
 
             try
             {
                 MySQL mySql = new MySQL();
-                mySql.SletBruger(bruger);
+                mySql.SletBruger(brugernavn);
                 return Request.CreateResponse(HttpStatusCode.OK,"Bruger slettet");
             }
             
