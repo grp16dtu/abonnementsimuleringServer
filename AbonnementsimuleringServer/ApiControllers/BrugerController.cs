@@ -20,6 +20,10 @@ namespace AbonnementsimuleringServer.ApiControllers
         [ActionName("Hent")]
         public HttpResponseMessage Hent(string brugernavn, string kodeord)
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             try
             {
                 MySQL mySql = new MySQL();
@@ -42,6 +46,10 @@ namespace AbonnementsimuleringServer.ApiControllers
         [BasicAuth]
         public HttpResponseMessage HentAlle()
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             List<Bruger> brugere = new List<Bruger>();
             try
             {
@@ -64,10 +72,14 @@ namespace AbonnementsimuleringServer.ApiControllers
         [BasicAuth]
         public HttpResponseMessage Opret([FromBody]Bruger bruger)
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             if (bruger == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Data forkert");
 
-            int economicAftalenummer = ((ApiIdentitet)(HttpContext.Current.User.Identity)).EconomicAftalenummer;
+            int economicAftalenummer = identitet.EconomicAftalenummer;
 
             try
             {
@@ -96,12 +108,22 @@ namespace AbonnementsimuleringServer.ApiControllers
         [BasicAuth]
         public HttpResponseMessage Rediger([FromBody]Bruger bruger)
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             if (bruger == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
 
             try
             {
                 MySQL mySql = new MySQL();
+                int brugerAftalenummer = mySql.HentEconomicAftalenummer(bruger.Brugernavn);
+                int ansvarligAftalenummer = identitet.EconomicAftalenummer;
+
+                if (brugerAftalenummer != ansvarligAftalenummer)
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
+
                 mySql.RedigerBruger(bruger);
                 return Request.CreateResponse(HttpStatusCode.OK,"Bruger redigeret");
             }
@@ -114,15 +136,25 @@ namespace AbonnementsimuleringServer.ApiControllers
         [HttpDelete]
         [ActionName("Slet")]
         [BasicAuth]
-        public HttpResponseMessage Slet(string brugernavn)
+        public HttpResponseMessage Slet(string id)
         {
-            if (brugernavn == null)
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
+            if (id == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
 
             try
             {
                 MySQL mySql = new MySQL();
-                mySql.SletBruger(brugernavn);
+                int brugerAftalenummer = mySql.HentEconomicAftalenummer(id);
+                int ansvarligAftalenummer = identitet.EconomicAftalenummer;
+
+                if (brugerAftalenummer != ansvarligAftalenummer)
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
+                
+                mySql.SletBruger(id);
                 return Request.CreateResponse(HttpStatusCode.OK,"Bruger slettet");
             }
             

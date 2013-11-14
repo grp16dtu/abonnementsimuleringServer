@@ -1,4 +1,5 @@
-﻿using AbonnementsimuleringServer.Helpers;
+﻿using AbonnementsimuleringServer.Controllers;
+using AbonnementsimuleringServer.Helpers;
 using AbonnementsimuleringServer.Models;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,9 @@ namespace AbonnementsimuleringServer.ApiControllers
 
                 if(mySql.BrugerEksisterer(abosimKonto.AbosimBruger.Brugernavn))
                     return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Brugernavn allerede i brug");
+
+                //if(EconomicController.EconomicKontoErValid(abosimKonto.EconomicAftalenummer, abosimKonto.EconomicBrugernavn, abosimKonto.EconomicKodeord))
+                //    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Udyldigt economic login");
 
                 mySql.OpretAftalenummer(abosimKonto.EconomicAftalenummer, abosimKonto.EconomicBrugernavn, abosimKonto.EconomicKodeord);
                 mySql.OpretBruger(abosimKonto.AbosimBruger, abosimKonto.EconomicAftalenummer);

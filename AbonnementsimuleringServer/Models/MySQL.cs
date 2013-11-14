@@ -332,6 +332,16 @@ namespace AbonnementsimuleringServer.Models
             return null;
         }
 
+        public int HentEconomicAftalenummer(string brugernavn)
+        {
+            TilslutMysql();
+            string forespoergsel = "SELECT economicAftalenummer FROM brugerautorisation WHERE brugernavn = '" + brugernavn + "'";
+            DataRow dataRow = LinjeFraDatabase(forespoergsel);
+            AfbrydMysql();
+
+            return (int)dataRow["economicAftalenummer"];
+        }
+
         public DataSet HentBruger(string brugernavn, string kodeord)
         {
             TilslutMysql();

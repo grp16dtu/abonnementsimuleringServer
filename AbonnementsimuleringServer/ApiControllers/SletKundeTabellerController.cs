@@ -15,6 +15,10 @@ namespace AbonnementsimuleringServer.Controllers
     {
         public HttpResponseMessage Get() 
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             int economicAftalenummer = ((ApiIdentitet)HttpContext.Current.User.Identity).EconomicAftalenummer;
             try
             {

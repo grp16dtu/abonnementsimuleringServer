@@ -21,10 +21,13 @@ namespace AbonnementsimuleringServer.Controllers
         [ActionName("Ny")]
         public HttpResponseMessage Ny(int id)
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             int brugerindex = id;
             try
             {
-                ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
                 EconomicController economic = new EconomicController(identitet.EconomicAftalenummer, identitet.EconomicBrugernavn, identitet.EconomicKodeord);
                 bool success = economic.GenererNySimulering(ANTAL_MAANEDER_AT_SIMULERE_OVER, brugerindex);
 
