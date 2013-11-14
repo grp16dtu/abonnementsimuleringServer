@@ -153,26 +153,6 @@ namespace AbonnementsimuleringServer.Models
             _mySqlForbindelse.Close();
         }
 
-        private void OpretTabel(string oprettelsesstreng)
-        {
-            TilDatabase(oprettelsesstreng);
-        }
-
-        private void ToemTabel(string tabelnavn)
-        {
-            TilDatabase("TRUNCATE TABLE " + tabelnavn);
-        }
-
-        private void SletTabel(string tabelnavn)
-        {
-            TilDatabase("DROP TABLE " + tabelnavn);
-        }
-
-        private void SletView()
-        {
-            TilDatabase("DROP VIEW " + _economicAftalenummer + "simuleringsdata");
-        }
-
         private void IndsaetVarer(EconomicUdtraek economicUdtraek)
         {
             string mySqlStreng = MysqlStrengbyggerRelationeltData(economicUdtraek, Tabelnavne.Varer);
@@ -254,12 +234,6 @@ namespace AbonnementsimuleringServer.Models
             mySqlData.Close();
             return null;
         }
-
-        private bool TabelEksisterer(string tabelNavn)
-        {
-            DataSet resultat = FraDatabase("SHOW TABLES LIKE '" + tabelNavn + "'");
-            return resultat != null;
-        } 
 
         private string MysqlStrengbyggerRelationeltData(EconomicUdtraek economicUdtraek, Tabelnavne tabelnavne)
         {
