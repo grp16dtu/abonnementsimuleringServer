@@ -13,7 +13,7 @@ using System.Web.Http;
 
 namespace AbonnementsimuleringServer.ApiControllers
 {
-    [BasicAuthentication]
+    [BasicAuth]
     public class BrugerController : ApiController
     {
         [HttpGet]
@@ -24,8 +24,12 @@ namespace AbonnementsimuleringServer.ApiControllers
             {
                 MySQL mySql = new MySQL();
                 DataSet brugerdata = mySql.HentBruger(brugernavn, kodeord);
+
+                if(brugerdata == null)
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Ingen bruger fundet");
+
                 Bruger bruger = new Bruger(brugerdata);
-                return Request.CreateResponse(HttpStatusCode.OK, bruger);
+                return Request.CreateResponse(HttpStatusCode.OK, bruger);     
             }
             catch (Exception exception)
             {
@@ -35,12 +39,17 @@ namespace AbonnementsimuleringServer.ApiControllers
 
         [HttpGet]
         [ActionName("HentAlle")]
+        [BasicAuth]
         public HttpResponseMessage HentAlle()
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             List<Bruger> brugere = new List<Bruger>();
             try
             {
-                MySQL mySql = new MySQL();
+                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
                 DataSet brugerdata = mySql.HentAlleBrugere();
 
                 brugere = Bruger.ListeAfBrugere(brugerdata);
@@ -56,19 +65,32 @@ namespace AbonnementsimuleringServer.ApiControllers
 
         [HttpPost]
         [ActionName("Opret")]
+        [BasicAuth]
         public HttpResponseMessage Opret([FromBody]Bruger bruger)
         {
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             if (bruger == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Data forkert");
 
-            int economicAftalenummer = Vaerktoejer.FindEconomicAftalenummer(HttpContext.Current.User.Identity.Name);
+            int economicAftalenummer = identitet.EconomicAftalenummer;
 
             try
             {
                 MySQL mySql = new MySQL();
-                mySql.OpretBruger(bruger, economicAftalenummer);
-                return Request.CreateErrorResponse(HttpStatusCode.OK, "Bruger oprettet");
+
+                if (mySql.BrugerEksisterer(bruger.Brugernavn))
+                    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Bruger allerede oprettet");
+
+                else 
+                {
+                    mySql.OpretBruger(bruger, economicAftalenummer);
+                    return Request.CreateErrorResponse(HttpStatusCode.OK, "Bruger oprettet");
+                }
             }
+
             catch (Exception exception)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
@@ -79,15 +101,25 @@ namespace AbonnementsimuleringServer.ApiControllers
 
         [HttpPut]
         [ActionName("Rediger")]
+        [BasicAuth]
         public HttpResponseMessage Rediger([FromBody]Bruger bruger)
         {
-            Debug.WriteLine("Ansvarlig: {0}",HttpContext.Current.User.IsInRole("Ansvarlig"));
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
             if (bruger == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
 
             try
             {
                 MySQL mySql = new MySQL();
+                int brugerAftalenummer = mySql.HentEconomicAftalenummer(bruger.Brugernavn);
+                int ansvarligAftalenummer = identitet.EconomicAftalenummer;
+
+                if (brugerAftalenummer != ansvarligAftalenummer)
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
+
                 mySql.RedigerBruger(bruger);
                 return Request.CreateResponse(HttpStatusCode.OK,"Bruger redigeret");
             }
@@ -95,21 +127,30 @@ namespace AbonnementsimuleringServer.ApiControllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
             }
-
-
         }
 
         [HttpDelete]
         [ActionName("Slet")]
-        public HttpResponseMessage Slet([FromUri]Bruger bruger)
+        [BasicAuth]
+        public HttpResponseMessage Slet(string id)
         {
-            if (bruger == null)
+            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
+            if (!identitet.Bruger.Ansvarlig)
+                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
+
+            if (id == null)
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
 
             try
             {
                 MySQL mySql = new MySQL();
-                mySql.SletBruger(bruger);
+                int brugerAftalenummer = mySql.HentEconomicAftalenummer(id);
+                int ansvarligAftalenummer = identitet.EconomicAftalenummer;
+
+                if (brugerAftalenummer != ansvarligAftalenummer)
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bruger data forkert");
+                
+                mySql.SletBruger(id);
                 return Request.CreateResponse(HttpStatusCode.OK,"Bruger slettet");
             }
             

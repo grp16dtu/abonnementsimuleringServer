@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbonnementsimuleringServer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
@@ -7,22 +8,35 @@ using System.Web.Providers.Entities;
 
 namespace AbonnementsimuleringServer.Autorisation
 {
-    public class ApiIdentity : IIdentity
+    public class ApiIdentitet : IIdentity
     {
-        public User User { get; private set; }
+        public Bruger Bruger { get; private set; }
+        public int EconomicAftalenummer { get; set; }
+        public string EconomicBrugernavn { get; set; }
+        public string EconomicKodeord { get; set; }
 
-        public ApiIdentity(User user)
+        public ApiIdentitet(Konto konto)
         {
-            if (user == null)
+            if (konto == null)
                 throw new ArgumentNullException("user");
 
-            this.User = user;
+            Bruger = konto.AbosimBruger;
+            EconomicAftalenummer = konto.EconomicAftalenummer;
+            EconomicBrugernavn = konto.EconomicBrugernavn;
+            EconomicKodeord = konto.EconomicKodeord;
         }
 
         public string Name
         {
-            get { return this.User.UserName; }
+            get { return Bruger.Brugernavn; }
         }
+
+        public string Password
+        {
+            get { return Bruger.Kodeord; }
+        }
+
+  
 
         public string AuthenticationType
         {
@@ -31,7 +45,7 @@ namespace AbonnementsimuleringServer.Autorisation
 
         public bool IsAuthenticated
         {
-            get { return true; }
+            get { return Bruger.Ansvarlig; }
         }
     }
 

@@ -16,7 +16,7 @@ namespace AbonnementsimuleringServer.Models
         {
             AarMaaned = new DateTime(aarMaaned.Year, aarMaaned.Month, 1);
             Debitornummer = debitornummer;
-            Varenummer = varenummer; 
+            Varenummer = varenummer;
             Antal = antal;
             Beloeb = beloeb;
             Afdelingsnummer = afdelingsnummer;

@@ -40,7 +40,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=6.1.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.7.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
@@ -152,6 +152,7 @@
     <Compile Include="ApiControllers\BrugerController.cs" />
     <Compile Include="ApiControllers\DatapunkterController.cs" />
     <Compile Include="ApiControllers\HomeController.cs" />
+    <Compile Include="ApiControllers\KontoController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -159,7 +160,7 @@
     <Compile Include="Autorisation\ApiIdentity.cs" />
     <Compile Include="Autorisation\BasicAuthenticationAttribute.cs" />
     <Compile Include="Controllers\EconomicController.cs" />
-    <Compile Include="ApiControllers\GenererNySimuleringController.cs" />
+    <Compile Include="ApiControllers\SimuleringController.cs" />
     <Compile Include="ApiControllers\SletKundeTabellerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -170,10 +171,12 @@
     <Compile Include="Models\Afdeling.cs" />
     <Compile Include="Models\Bruger.cs" />
     <Compile Include="Models\Datapunkt.cs" />
+    <Compile Include="Models\DatapunktLister.cs" />
+    <Compile Include="Models\Datapunktsgruppering.cs" />
     <Compile Include="Models\Debitor.cs" />
+    <Compile Include="Models\Konto.cs" />
     <Compile Include="Models\EconomicUdtraek.cs" />
     <Compile Include="Models\MySQL.cs" />
-    <Compile Include="Models\TabelType.cs" />
     <Compile Include="Models\Transaktion.cs" />
     <Compile Include="Models\Vare.cs" />
     <Compile Include="Models\Varelinje.cs" />
@@ -185,9 +188,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Css\bootstrap.css" />
+    <Content Include="Include\Css\bootstrap.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Include\Javascript\jquery.js" />
     <Content Include="Service References\EconomicSOAP\AbonnementsimuleringServer.EconomicSOAP.AccountData.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>

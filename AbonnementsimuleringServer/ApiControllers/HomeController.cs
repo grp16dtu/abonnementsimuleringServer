@@ -8,13 +8,10 @@ namespace AbonnementsimuleringServer.ApiControllers
 {
     public class HomeController : Controller
     {
-        //
-        // GET: /Home/
-
         public ActionResult Index()
         {
+            // API forside
             return View();
         }
-
     }
 }
