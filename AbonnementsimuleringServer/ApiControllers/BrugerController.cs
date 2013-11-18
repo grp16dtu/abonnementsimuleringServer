@@ -20,10 +20,6 @@ namespace AbonnementsimuleringServer.ApiControllers
         [ActionName("Hent")]
         public HttpResponseMessage Hent(string brugernavn, string kodeord)
         {
-            ApiIdentitet identitet = (ApiIdentitet)HttpContext.Current.User.Identity;
-            if (!identitet.Bruger.Ansvarlig)
-                return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Du har ikke rettigheder til dette");
-
             try
             {
                 MySQL mySql = new MySQL();
@@ -53,7 +49,7 @@ namespace AbonnementsimuleringServer.ApiControllers
             List<Bruger> brugere = new List<Bruger>();
             try
             {
-                MySQL mySql = new MySQL();
+                MySQL mySql = new MySQL(identitet.EconomicAftalenummer);
                 DataSet brugerdata = mySql.HentAlleBrugere();
 
                 brugere = Bruger.ListeAfBrugere(brugerdata);

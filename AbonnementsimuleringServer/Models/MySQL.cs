@@ -333,7 +333,7 @@ namespace AbonnementsimuleringServer.Models
         public DataSet HentAlleBrugere()
         {
             TilslutMysql();
-            string forespoergsel = "SELECT * FROM brugere";
+            string forespoergsel = "SELECT * FROM brugerautorisation WHERE economicaftalenummer = '" + _economicAftalenummer + "'";
             DataSet mySqlData = FraDatabase(forespoergsel);
             AfbrydMysql();
             return mySqlData;

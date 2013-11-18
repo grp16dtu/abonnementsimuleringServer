@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace AbonnementsimuleringServer.Controllers
 {
-    class EconomicController
+    public class EconomicController
     {
         private int _economicAftalenummer;
         private string _economicBrugernavn;
@@ -23,7 +23,15 @@ namespace AbonnementsimuleringServer.Controllers
             this._economicAftalenummer = economicAftalenummer;
             this._economicBrugernavn = economicBrugernavn;
             this._economicKodeord = economicKodeord;
-            this._economicSOAPklient = new EconomicWebServiceSoapClient();
+
+            try
+            {
+                this._economicSOAPklient = new EconomicWebServiceSoapClient();
+            }
+            catch (Exception)
+            {
+                this._economicSOAPklient = null;
+            }
         }
 
         public static bool EconomicKontoErValid(int economicAftalenummer, string economicBrugernavn, string economicKodeord)
@@ -209,7 +217,7 @@ namespace AbonnementsimuleringServer.Controllers
         /// <param name="antalSimuleringsmaaneder">Antal måneder der ønskes simuleret over.</param>
         /// <param name="brugerIndex">Index til 1 til afgørelsen af produktpris.</param>
         /// <returns>Liste af transaktioner klar til lagring i database.</returns>
-        private List<Transaktion> GenererTransaktioner(List<Abonnement> abonnementer, int antalSimuleringsmaaneder, decimal brugerIndex)
+        public List<Transaktion> GenererTransaktioner(List<Abonnement> abonnementer, int antalSimuleringsmaaneder, decimal brugerIndex)
         {
             var transaktioner = new List<Transaktion>();
 
