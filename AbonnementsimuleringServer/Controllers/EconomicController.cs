@@ -199,7 +199,7 @@ namespace AbonnementsimuleringServer.Controllers
 
                 if (varelinjeData.ProductHandle != null)
                 {
-                    Varelinje varelinje = new Varelinje(varelinjeData.Id, varelinjeData.Number, varelinjeData.ProductName, varelinjeData.Quantity, varelinjeData.SpecialPrice, produktopslag[varelinjeData.ProductHandle.Number], afdeling);
+                    Varelinje varelinje = new Varelinje(varelinjeData.Id, varelinjeData.Number, (decimal)varelinjeData.Quantity, varelinjeData.SpecialPrice, produktopslag[varelinjeData.ProductHandle.Number], afdeling);
                     abonnementopslag[varelinjeData.Id].Varelinjer.Add(varelinje); 
 
                     if (!varelinjeopslag.ContainsKey(varelinjeData.Id))
@@ -242,9 +242,9 @@ namespace AbonnementsimuleringServer.Controllers
                                 Console.WriteLine("Varelinje - Abonnentperiode: {1} - {2}, SimDato: {3}",varelinje.Produkt.Navn, abonnent.Startdato.ToShortDateString(), abonnent.Slutdato.ToShortDateString(), simuleringsdato.ToShortDateString());
                                 Console.WriteLine(simuleringsdato.ToShortDateString());
 
-                                decimal produktpris = BeregnProduktpris(abonnement, varelinje, abonnent, simuleringsdato,RabatErUdlobet(abonnent.DatoRabatudloeb, simuleringsdato), brugerIndex);
-                                decimal? produktantal = BeregnProduktantal(varelinje, abonnent);
-                                decimal varelinjepris = (decimal)(produktpris * produktantal);
+                                decimal produktpris = BeregnProduktpris(varelinje, abonnent,RabatErUdlobet(abonnent.DatoRabatudloeb, simuleringsdato), brugerIndex);
+                                decimal produktantal = BeregnProduktantal(abonnement, varelinje, abonnent, simuleringsdato);
+                                decimal varelinjepris = produktpris * produktantal;
                                 int? afdelingsnummer = HentAfdelingsnummer(varelinje);                               
                                 transaktioner.Add(new Transaktion(simuleringsdato, abonnent.Debitor.Nummer, varelinje.Produkt.Nummer, produktantal, varelinjepris, afdelingsnummer));
                             }
@@ -305,17 +305,52 @@ namespace AbonnementsimuleringServer.Controllers
             return (rabatSlutdato < aktuelSimuleringsdato);
         }
 
-        private decimal? BeregnProduktantal(Varelinje varelinje, Abonnent abonnent)
+        private decimal BeregnProduktantal(Abonnement abonnement, Varelinje varelinje, Abonnent abonnent, DateTime simuleringsdato)
         {
-            decimal? produktantal = varelinje.Antal;
+            decimal produktantal = varelinje.Antal;
+
+            // Forholdsmæssig opkrævning 
+            if (abonnement.OpkraevesForholdsmaessigt())
+            {
+                DateTime naesteIntervalStartdato = abonnement.LaegIntervalTilDato(simuleringsdato);
+
+                double interval = (naesteIntervalStartdato - simuleringsdato).TotalDays;
+                double dageStartSlut = interval;
+
+                // Hvis startdato er senere end simuleringsdato
+                if (abonnent.Startdato > simuleringsdato)
+                    dageStartSlut = (naesteIntervalStartdato - abonnent.Startdato).TotalDays + 1;
+
+
+                // Hvis nuværende simuleringsinterval overskrider endegyldig slutdato for abonnent
+                if (naesteIntervalStartdato > abonnent.EndegyldigSlutdato())
+                {
+                    // Hvis simuleringsdato er senere end abonnentens startdato
+                    if (abonnent.Startdato <= simuleringsdato)
+                        dageStartSlut = (abonnent.EndegyldigSlutdato() - simuleringsdato).TotalDays + 1;
+
+                    // Hvis simuleringsdatoen er tidligere end startdatoen
+                    else
+                        dageStartSlut = (naesteIntervalStartdato - abonnent.Startdato).TotalDays + 1;
+                }
+
+                Decimal forhold = (Decimal)(dageStartSlut / interval);
+                produktantal = produktantal * forhold;
+
+                //Console.WriteLine("Forhold: " + forhold);
+                //Console.WriteLine("Forholdsmæssigt abonnement - Interval: {0}, Rest: {1}, Pris: {2}", interval, dageStartSlut, varepris);
+            }
 
             if (abonnent.Antalsfaktor != null) 
-                produktantal = produktantal * abonnent.Antalsfaktor;
+                produktantal = produktantal * (decimal)abonnent.Antalsfaktor;
+
+            //Afrund til 2 decimaler
+            produktantal = decimal.Round(produktantal, 2);
 
             return produktantal;
         }
 
-        private decimal BeregnProduktpris(Abonnement abonnement,  Varelinje varelinje, Abonnent abonnent, DateTime simuleringsdato, bool rabatErUdloebet, decimal brugerIndex)
+        private decimal BeregnProduktpris(Varelinje varelinje, Abonnent abonnent, bool rabatErUdloebet, decimal brugerIndex)
         {
             // Fuld opkrævning 
             decimal varepris = varelinje.Produkt.Salgpris;
@@ -328,45 +363,19 @@ namespace AbonnementsimuleringServer.Controllers
             if (abonnent.Saerpris != null)
                 varepris = Convert.ToDecimal(abonnent.Saerpris);
 
-            // Forholdsmæssig opkrævning 
-            if (abonnement.OpkraevesForholdsmaessigt())
-            {
-                DateTime naesteIntervalStartdato = abonnement.LaegIntervalTilDato(simuleringsdato);
-
-                double interval = (naesteIntervalStartdato - simuleringsdato).TotalDays;
-                double dageStartSlut = interval;
-                
-                // Hvis startdato er senere end simuleringsdato
-                if (abonnent.Startdato > simuleringsdato)
-                    dageStartSlut = (naesteIntervalStartdato - abonnent.Startdato).TotalDays + 1;
-                
-                    
-                // Hvis nuværende simuleringsinterval overskrider endegyldig slutdato for abonnent
-                if (naesteIntervalStartdato > abonnent.EndegyldigSlutdato()) 
-                {
-                    // Hvis simuleringsdato er senere end abonnentens startdato
-                    if (abonnent.Startdato <= simuleringsdato)
-                        dageStartSlut = (abonnent.EndegyldigSlutdato() - simuleringsdato).TotalDays + 1;
-
-                    // Hvis simuleringsdatoen er tidligere end startdatoen
-                    else
-                        dageStartSlut = (naesteIntervalStartdato - abonnent.Startdato).TotalDays + 1; 
-                }
-
-                Decimal forhold = (Decimal)(dageStartSlut / interval);
-                varepris = varepris * forhold;
-
-                //Console.WriteLine("Forhold: " + forhold);
-                //Console.WriteLine("Forholdsmæssigt abonnement - Interval: {0}, Rest: {1}, Pris: {2}", interval, dageStartSlut, varepris);
-            }
-
             // Eventuel rabat
             if (abonnent.RabatSomProcent != null && !rabatErUdloebet)
                 varepris = varepris * (100 - Convert.ToDecimal(abonnent.RabatSomProcent)) / 100;
 
             // Brugerdefineret index på pris
+            decimal abonnentPrisindex = 1;
             if (abonnent.Prisindex != null)
-                varepris = varepris * brugerIndex / Convert.ToDecimal(abonnent.Prisindex);
+                abonnentPrisindex = (decimal)abonnent.Prisindex;
+
+            varepris = varepris * brugerIndex / abonnentPrisindex;
+
+            //Afrunding til 2 decimaler
+            varepris = Decimal.Round(varepris, 2);
 
             return varepris;
         }

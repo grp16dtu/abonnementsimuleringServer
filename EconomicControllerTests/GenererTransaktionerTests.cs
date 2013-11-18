@@ -17,41 +17,558 @@ namespace EconomicControllerTests
     public class GenererTransaktionerTests
     {
         [TestMethod]
-        public void GenerelTest()
+        public void BasalTest1UgeProportional()
         {
             // arrange
-            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
-
             int simuleringsMaaneder = 12;
             decimal brugerIndex = 1;
 
-            List<Abonnement> abonnementer = new List<Abonnement>();
-            
-            Vare produkt = new Vare(42, "Gummiand", "4", 100, 0, null);
-            Varelinje varelinje = new Varelinje(3, 1, "Gummiand", 5, null, produkt, null);
-            Debitor debitor = new Debitor("Vinkelvej 10", 645112, "56956956", "Roskilde", null, null, null, "kiaer@innologic.dk", "Jensen og Co.", "1", "4000", null);
-            Abonnent abonnent = new Abonnent(12, debitor, 25, null, DateTime.Parse("28-10-2014 00:00:00"), null, null, null, DateTime.Parse("28-10-2013 00:00:00"), null, DateTime.Parse("29-05-2014 00:00:00"));
-            Abonnement abonnement = new Abonnement(3, "Bummelum", 3, false, "FourWeeks", "Full");
-            abonnement.Varelinjer.Add(varelinje);
-            abonnement.Abonnenter.Add(abonnent);
-            abonnementer.Add(abonnement);
-            // TODO: Indsæt flere abonnementer...
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
 
-            List<Transaktion> forventet = new List<Transaktion>();
-            Transaktion transaktion = new Transaktion(DateTime.Parse("01.05.2014 00:00:00"), "1", "4", 5, 375, null);
-            forventet.Add(transaktion);
-            // TODO: Indsæt flere transaktioner...
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("29-05-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("28-10-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Week";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 109.29M;
+            decimal forventetPris = 10929.00M;
 
 
             // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
             List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
 
 
             // assert
-            List<Transaktion> forskelForventetFaktisk = forventet.Except(faktisk).ToList();
-            List<Transaktion> forskelFaktiskForventet = faktisk.Except(forventet).ToList();
-            if(forskelFaktiskForventet.Count > 0 || forskelForventetFaktisk.Count > 0)
-                Assert.Fail("Faktisk resultat afviger fra forventet med " + (forskelFaktiskForventet.Count + forskelForventetFaktisk.Count) + " transaktioner.");
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void BasalTest1MaanedProportional()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("29-05-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("28-10-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 24.68M;
+            decimal forventetPris = 2468.00M;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void BasalTest1MaanedProportionalHalv()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("14-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 2.26M;
+            decimal forventetPris = 226;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void BasalTest1MaanedFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("31-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 5;
+            decimal forventetPris = 500;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void BasalTest2MaanederFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("29-05-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("28-10-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "TwoMonths";
+            string abonnementOpkraevning = "Full";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 3 * vareAntal;
+            decimal forventetPris = 3 * vareAntal * vareSalgsPris;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void RabatTest1MaanedFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = 25;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("31-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 5;
+            decimal forventetPris = 375;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void SpecialPrisTest1MaanedFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = 300;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("31-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 5;
+            decimal forventetPris = 1500;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void Index2Test1MaanedFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = 2;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("31-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 5;
+            decimal forventetPris = 250;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void Index15Test1MaanedFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 1;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = 15;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("31-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 5;
+            decimal forventetPris = 33.35M;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void BrugerIndex2Test1MaanedFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 2;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("31-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 5;
+            decimal forventetPris = 1000;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        [TestMethod]
+        public void BrugerIndex15Test1MaanedFull()
+        {
+            // arrange
+            int simuleringsMaaneder = 12;
+            decimal brugerIndex = 15;
+
+            string vareNummer = "10";
+            decimal vareKostPris = 42;
+            decimal vareSalgsPris = 100;
+            decimal vareAntal = 5;
+
+            string debitorNummer = "1";
+
+            decimal? abonnentPrisIndex = null;
+            decimal? abonnentSpecialPris = null;
+            decimal? abonnentRabat = null;
+            DateTime? abonnentRabatUdloeb = null;
+            DateTime abonnentStart = DateTime.Parse("01-01-2014 00:00:00");
+            DateTime abonnentSlut = DateTime.Parse("31-01-2014 00:00:00");
+            DateTime? abonnentUdloeb = null;
+
+            string abonnementInterval = "Month";
+            string abonnementOpkraevning = "Proportional";
+            bool abonnementKalenderAar = false;
+
+            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+
+            decimal forventetAntal = 5;
+            decimal forventetPris = 7500;
+
+
+            // act
+            EconomicController ec = new EconomicController(387892, "DTU", "Trustno1");
+            List<Transaktion> faktisk = ec.GenererTransaktioner(abonnementer, simuleringsMaaneder, brugerIndex);
+
+
+            // assert
+            decimal faktiskPris = 0, faktiskAntal = 0;
+            foreach (Transaktion transaktion in faktisk)
+            {
+                faktiskPris = faktiskPris + transaktion.Beloeb;
+                faktiskAntal = faktiskAntal + (decimal)transaktion.Antal;
+            }
+
+            Assert.AreEqual(forventetPris, faktiskPris);
+            Assert.AreEqual(forventetAntal, faktiskAntal);
+        }
+
+        private List<Abonnement> GenererTestAbonnement(string vareNummer, decimal vareKostPris, decimal vareSalgsPris, decimal vareAntal, string debitorNummer, decimal? abonnentPrisIndex, decimal? abonnentSpecialPris, decimal? abonnentRabat, DateTime? abonnentRabatUdloeb, DateTime abonnentStart, DateTime abonnentSlut, DateTime? abonnentUloeb, string abonnementInterval, string abonnementOpkraevning, bool abonnementKalenderAar)
+        {
+            List<Abonnement> abonnementer = new List<Abonnement>();
+
+            Vare produkt = new Vare(vareKostPris, null, vareNummer, vareSalgsPris, 0, null);
+            Varelinje varelinje = new Varelinje(0, 0, vareAntal, null, produkt, null);
+            Debitor debitor = new Debitor(null, 0, null, null, null, null, null, null, null, debitorNummer, null, null);
+            Abonnent abonnent = new Abonnent(0, debitor, abonnentRabat, abonnentRabatUdloeb, abonnentSlut, abonnentUloeb, null, abonnentPrisIndex, DateTime.MinValue, abonnentSpecialPris, abonnentStart);
+            Abonnement abonnement = new Abonnement(0, null, 0, abonnementKalenderAar, abonnementInterval, abonnementOpkraevning);
+            abonnement.Varelinjer.Add(varelinje);
+            abonnement.Abonnenter.Add(abonnent);
+            abonnementer.Add(abonnement);
+
+            return abonnementer;
         }
     }
 }

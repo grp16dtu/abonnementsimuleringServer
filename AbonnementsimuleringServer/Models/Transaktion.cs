@@ -21,24 +21,5 @@ namespace AbonnementsimuleringServer.Models
             Beloeb = beloeb;
             Afdelingsnummer = afdelingsnummer;
         }
-
-        public override bool Equals(Object obj)
-        {
-            Transaktion t = (Transaktion)obj;
-            if (t == null)
-                return false;
-            else
-                return AarMaaned.Equals(t.AarMaaned)
-                    && Debitornummer.Equals(t.Debitornummer)
-                    && Varenummer.Equals(t.Varenummer)
-                    && Afdelingsnummer.Equals(t.Afdelingsnummer)
-                    && Antal.Equals(t.Antal)
-                    && Beloeb.Equals(t.Beloeb);
-        }
-
-        public override int GetHashCode()
-        {
-            return AarMaaned.GetHashCode() + Debitornummer.GetHashCode() + Varenummer.GetHashCode() + Beloeb.GetHashCode();
-        }
     }
 }
