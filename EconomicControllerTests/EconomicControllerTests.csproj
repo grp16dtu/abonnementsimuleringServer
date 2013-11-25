@@ -61,7 +61,6 @@
     <Compile Include="GenererTransaktionerSlutUdloebTests.cs" />
     <Compile Include="GenererTransaktionerPeriodeTests.cs" />
     <Compile Include="GenererTransaktionerIntervalTests.cs" />
-    <Compile Include="GenererTransaktionerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vaerktoejer.cs" />
   </ItemGroup>
