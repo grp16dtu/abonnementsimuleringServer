@@ -10,11 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 
-
+/*
 namespace EconomicControllerTests
 {
     [TestClass]
-    public class GenererTransaktionerTests
+    public class GenererTransaktionerIntervalTests
     {
         [TestMethod]
         public void BasalTest1UgeProportional()
@@ -24,7 +24,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -42,7 +41,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 109.29M;
             decimal forventetPris = 10929.00M;
@@ -73,7 +72,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -91,7 +89,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 24.68M;
             decimal forventetPris = 2468.00M;
@@ -122,7 +120,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -140,7 +137,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 2.26M;
             decimal forventetPris = 226;
@@ -171,7 +168,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -189,7 +185,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 5;
             decimal forventetPris = 500;
@@ -220,7 +216,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -238,7 +233,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Full";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 3 * vareAntal;
             decimal forventetPris = 3 * vareAntal * vareSalgsPris;
@@ -269,7 +264,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -287,7 +281,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 5;
             decimal forventetPris = 375;
@@ -318,7 +312,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -336,7 +329,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 5;
             decimal forventetPris = 1500;
@@ -367,7 +360,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -385,7 +377,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 5;
             decimal forventetPris = 250;
@@ -416,7 +408,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 1;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -434,7 +425,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 5;
             decimal forventetPris = 33.35M;
@@ -465,7 +456,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 2;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -483,7 +473,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 5;
             decimal forventetPris = 1000;
@@ -514,7 +504,6 @@ namespace EconomicControllerTests
             decimal brugerIndex = 15;
 
             string vareNummer = "10";
-            decimal vareKostPris = 42;
             decimal vareSalgsPris = 100;
             decimal vareAntal = 5;
 
@@ -532,7 +521,7 @@ namespace EconomicControllerTests
             string abonnementOpkraevning = "Proportional";
             bool abonnementKalenderAar = false;
 
-            List<Abonnement> abonnementer = GenererTestAbonnement(vareNummer, vareKostPris, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
+            List<Abonnement> abonnementer = Vaerktoejer.GenererTestAbonnement(vareNummer, vareSalgsPris, vareAntal, debitorNummer, abonnentPrisIndex, abonnentSpecialPris, abonnentRabat, abonnentRabatUdloeb, abonnentStart, abonnentSlut, abonnentUdloeb, abonnementInterval, abonnementOpkraevning, abonnementKalenderAar);
 
             decimal forventetAntal = 5;
             decimal forventetPris = 7500;
@@ -554,21 +543,6 @@ namespace EconomicControllerTests
             Assert.AreEqual(forventetPris, faktiskPris);
             Assert.AreEqual(forventetAntal, faktiskAntal);
         }
-
-        private List<Abonnement> GenererTestAbonnement(string vareNummer, decimal vareKostPris, decimal vareSalgsPris, decimal vareAntal, string debitorNummer, decimal? abonnentPrisIndex, decimal? abonnentSpecialPris, decimal? abonnentRabat, DateTime? abonnentRabatUdloeb, DateTime abonnentStart, DateTime abonnentSlut, DateTime? abonnentUloeb, string abonnementInterval, string abonnementOpkraevning, bool abonnementKalenderAar)
-        {
-            List<Abonnement> abonnementer = new List<Abonnement>();
-
-            Vare produkt = new Vare(vareKostPris, null, vareNummer, vareSalgsPris, 0, null);
-            Varelinje varelinje = new Varelinje(0, 0, vareAntal, null, produkt, null);
-            Debitor debitor = new Debitor(null, 0, null, null, null, null, null, null, null, debitorNummer, null, null);
-            Abonnent abonnent = new Abonnent(0, debitor, abonnentRabat, abonnentRabatUdloeb, abonnentSlut, abonnentUloeb, null, abonnentPrisIndex, DateTime.MinValue, abonnentSpecialPris, abonnentStart);
-            Abonnement abonnement = new Abonnement(0, null, 0, abonnementKalenderAar, abonnementInterval, abonnementOpkraevning);
-            abonnement.Varelinjer.Add(varelinje);
-            abonnement.Abonnenter.Add(abonnent);
-            abonnementer.Add(abonnement);
-
-            return abonnementer;
-        }
     }
 }
+*/
