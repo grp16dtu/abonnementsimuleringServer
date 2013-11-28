@@ -222,7 +222,7 @@ namespace AbonnementsimuleringServer.Controllers
             var transaktioner = new List<Transaktion>();
 
             DateTime simuleringsdatoStart = SaetNaesteFoerste();
-            DateTime simuleringsdatoSlut = simuleringsdatoStart.AddMonths(antalSimuleringsmaaneder + 1);
+            DateTime simuleringsdatoSlut = simuleringsdatoStart.AddMonths(antalSimuleringsmaaneder).AddMilliseconds(-1); //Fjern 1ms for ikke at få 13 måneder i et år
             DateTime simuleringsdato;
             
             foreach (var abonnement in abonnementer) 
@@ -369,7 +369,7 @@ namespace AbonnementsimuleringServer.Controllers
 
             // Brugerdefineret index på pris
             decimal abonnentPrisindex = 1;
-            if (abonnent.Prisindex != null)
+            if (abonnent.Prisindex != null && abonnent.Prisindex != 0)
                 abonnentPrisindex = (decimal)abonnent.Prisindex;
 
             varepris = varepris * brugerIndex / abonnentPrisindex;
